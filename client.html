@@ -1,0 +1,37 @@
+<html>
+
+<body>
+  <h1>Looshi's Local Logger</h1>
+  <p id="status"></p>
+
+  <script>
+    const status = document.getElementById('status');
+
+    const es = new EventSource('http://localhost:{{port}}/events');
+
+    es.addEventListener('open', (message) => {
+      status.textContent = "Connected";
+      status.setAttribute('style', "background: lightgreen")
+    });
+
+    es.addEventListener('error', (message) => {
+      status.textContent = "Not connected";
+      status.setAttribute('style', "background: orange")
+    });
+
+    es.addEventListener('message', (message) => {
+      try {
+        var obj = JSON.parse(message.data);
+        if (typeof obj == 'string') {
+          // If the json was double stringified, double parse here
+          obj = JSON.parse(obj);
+        }
+        console.log(obj);
+      } catch (e) {
+        console.log(message.data);
+      };
+    })
+  </script>
+</body>
+
+</html>

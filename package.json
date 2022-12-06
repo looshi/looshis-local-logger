@@ -1,0 +1,11 @@
+{
+  "name": "looshis-local-logger",
+  "version": "1.0.0",
+  "description": "View local logs in your browser",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "type": "module",
+  "author": "looshi",
+  "license": "MIT"
+}
