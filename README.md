@@ -1,6 +1,9 @@
 # looshis-local-logger
-This is a node application that serves a child application's stdout on a specified port.
+View terminal output in the browser!
 
+![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
+
+Node application that serves a child application's stdout on a specified port.
 Allows Chrome/Firefox/etc. devtools to be used to filter/view/inspect stdout.
 
 ## Install
