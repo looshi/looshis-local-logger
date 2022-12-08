@@ -1,6 +1,12 @@
+#! /usr/bin/env node
+
 import { spawn } from 'node:child_process';
 import http from 'http';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const HERE = fileURLToPath(import.meta.url);
+const CLIENT_FILE_PATH = `${path.dirname(HERE)}/client.html`;
 
 // server
 const port = process.env.PORT || 3333;
@@ -15,7 +21,7 @@ http.createServer((req, res) => {
     });
     sendMessage("LLL ready...")
   } else {
-    const html = fs.readFileSync('./client.html', 'utf8');
+    const html = fs.readFileSync(CLIENT_FILE_PATH, 'utf8');
     res.end(html.replace("{{port}}", port));
   }
 }).listen(port, () => {

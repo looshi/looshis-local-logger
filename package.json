@@ -1,9 +1,16 @@
 {
   "name": "looshis-local-logger",
   "version": "1.0.0",
-  "description": "View local logs in your browser",
+  "description": "View terminal output in browser",
   "scripts": {
-    "start": "node server.js"
+    "start": "node src/server.js"
+  },
+  "bin": {
+    "lll": "src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/looshi/looshis-local-logger"
   },
   "type": "module",
   "author": "looshi",

@@ -1,13 +1,13 @@
 <html>
 
-<body>
+<body style="background: aliceblue">
   <h1>Looshi's Local Logger</h1>
   <p id="status"></p>
 
   <script>
     const status = document.getElementById('status');
-
     const es = new EventSource('http://localhost:{{port}}/events');
+    let eCount = 0;
 
     es.addEventListener('open', (message) => {
       status.textContent = "Connected";
@@ -20,6 +20,8 @@
     });
 
     es.addEventListener('message', (message) => {
+      eCount = eCount + 1;
+      status.textContent = `Connected, ${eCount} events received`;
       try {
         var obj = JSON.parse(message.data);
         if (typeof obj == 'string') {
