@@ -1,8 +1,11 @@
 # looshis-local-logger
-View terminal output in the browser devtools!
+[![NPM Version](https://img.shields.io/npm/v/looshis-local-logger.svg?style=flat)](https://www.npmjs.com/package/looshis-local-logger) [![NPM Downloads](https://img.shields.io/npm/dt/looshis-local-logger.svg?style=flat)](https://www.npmjs.com/package/looshis-local-logger)
+
+Stream terminal output to the browser devtools!
 
 ![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
+This package has no dependencies and is less than 100 lines of code.
 
 ## Install
 ```sh
