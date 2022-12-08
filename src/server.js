@@ -37,7 +37,7 @@ function sendMessage(message) {
 // child process
 if (process.argv.length < 3) {
   console.error("LLL error: missing command argument");
-  console.error("usage: npm run start -- [command]");
+  console.error(`usage: lll -- "command"`);
   process.exit(1);
 }
 
