@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const HERE = fileURLToPath(import.meta.url);
 const CLIENT_FILE_PATH = `${path.dirname(HERE)}/client.html`;
-const VERSION = 'LLL v1.0.3';
+const VERSION = 'LLL v1.1.0';
 const port = process.env.PORT || 3333;
 let client;  // allows only one client running at one time
 let rl;
@@ -44,6 +44,7 @@ function onData(data) {
 }
 
 if (process.argv[2]) {
+  // If command was passed, start the command as a subprocess and stream its output.
   const [program, ...args] = process.argv[2].split(' ');
   if (program === "-v" || program === "--version") {
     console.log(VERSION);
@@ -69,6 +70,7 @@ if (process.argv[2]) {
     sendMessage(msg);
   });
 } else {
+  // If no command was passed, start LLL in standalone mode and listen for stdin.
   let input = [];
 
   rl = readline.createInterface({

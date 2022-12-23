@@ -5,9 +5,9 @@ Stream terminal output to the browser devtools!
 
 ![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
-Leverage the devtool's features like the JSON inspector and filtering for your raw terminal output.
+LLL is a command line program which allows you to view terminal output in a browser's devtools.  Use the JSON inspector, filter, and more when viewing your terminal's output.
 
-LLL has no dependencies and is less than 150 lines of code.
+LLL has no dependencies.
 
 ## Install
 ```sh
@@ -16,27 +16,30 @@ npm i -g looshis-local-logger
 
 ## How To Use
 
-Send stdout to the browser:
+Start an application from LLL:
+
+```sh
+lll "node ./examples/node-app/index.js"
+```
+
+OR start LLL in standalone mode:
 
 ```sh
 lll
-# Open browser at http://localhost:3333, open devtools.
-# Make a GET request for JSON of the planet tatooine ( translated to wookiee ):
-LLL> curl -s https://swapi.dev/api/planets/1/?format=wookiee \
-  -H "Accept: application/json"
+# LLL> Enter Commands
 ```
 
-Send an application's stdout to the browser:
-
-```sh
-lll "node ./examples/node-app/index"
-# Open browser at http://localhost:3333, open devtools.
-```
+After LLL has started, open your browser and navigate to http://localhost:3333, open devtools and click on the console tab.
 
 CTRL+C to exit.
 
 ### More Examples
 ```sh
+# Start lll in standalone mode and enter a curl command
+lll
+curl -s https://swapi.dev/api/planets/1 \
+  -H "Accept: application/json"
+
 # Run npm script:
 lll "npm --prefix ./examples/node-app run start"
 # Open browser at http://localhost:3333, open devtools.
