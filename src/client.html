@@ -1,7 +1,10 @@
 <html>
 
-<body style="background: aliceblue">
-  <h1>Looshi's Local Logger</h1>
+<head>
+  <title>LLL</title>
+</head>
+
+<body style="background: #1c2023; color: #bfb5a9; font-family: Arial, Helvetica, sans-serif;margin:0;">
   <p id="status"></p>
 
   <script>
@@ -11,17 +14,17 @@
 
     es.addEventListener('open', (message) => {
       status.textContent = "Connected";
-      status.setAttribute('style', "background: lightgreen")
+      status.setAttribute('style', "color: lightgreen; border-top: 6px solid lightgreen;");
     });
 
     es.addEventListener('error', (message) => {
       status.textContent = "Not connected";
-      status.setAttribute('style', "background: orange")
+      status.setAttribute('style', "color: orange; border-top: 6px solid orange;");
     });
 
     es.addEventListener('message', (message) => {
       eCount = eCount + 1;
-      status.textContent = `Connected, ${eCount} events received`;
+      status.textContent = `Connected, lines received: ${eCount}`;
       try {
         var obj = JSON.parse(message.data);
         if (typeof obj == 'string') {
