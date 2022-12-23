@@ -5,10 +5,9 @@ Stream terminal output to the browser devtools!
 
 ![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
-This package has no dependencies and is less than 150 lines of code.
+Leverage the devtool's features like the JSON inspector and filtering for your raw terminal output.
 
-## Why ?
-Leverage the browser's devtool features like JSON object inspector and filtering for your raw terminal output.
+LLL has no dependencies and is less than 150 lines of code.
 
 ## Install
 ```sh
@@ -17,37 +16,43 @@ npm i -g looshis-local-logger
 
 ## How To Use
 
-When run standalone, LLL will listen for stdin and send output to the browser:
+Send stdout to the browser:
 
 ```sh
-# Start LLL , then make a request via curl.
 lll
-curl -s https://swapi.dev/api/planets/1/?format=wookiee \
+# Open browser at http://localhost:3333, open devtools.
+# Make a GET request for JSON of the planet tatooine ( translated to wookiee ):
+LLL> curl -s https://swapi.dev/api/planets/1/?format=wookiee \
   -H "Accept: application/json"
+```
+
+Send an application's stdout to the browser:
+
+```sh
+lll "node ./examples/node-app/index"
 # Open browser at http://localhost:3333, open devtools.
 ```
 
-When a command is given, LLL will send the command's output to the browser:
+CTRL+C to exit.
 
+### More Examples
 ```sh
-# Start a node app:
-lll "node ./examples/node-app/index"
-# Open browser at http://localhost:3333, open devtools.
-
 # Run npm script:
 lll "npm --prefix ./examples/node-app run start"
 # Open browser at http://localhost:3333, open devtools.
+
+# Specify a port:
+PORT=1234 lll "npm --prefix ./examples/node-app run start"
+ # Open browser at: http://localhost:1234/, open devtools.
 
 # Start a ruby app:
 lll "ruby ./examples/ruby-app/ruby.rb"
 # Open browser at http://localhost:3333, open devtools.
 
-# Specify a port:
-PORT=1234 lll -- "npm --prefix ./examples/node-app run start"
- # Open browser at: http://localhost:1234/, open devtools.
+# Pass env vars to the child process:
+MY_VAR=3 lll "node ./examples/node-app/index"
+# MY_VAR will be available in node-app.index.js
 ```
-
-CTRL+C to exit.
 
 ## How it works
 The server will spawn the given command in a subprocess.  The subprocess stdout/stderr events are then sent to the client via server-sent events.
@@ -74,16 +79,13 @@ PORT=1234 npm run start "npm --prefix ./examples/node-app run start"
 # Start a ruby app
 npm run start "ruby ./examples/ruby-app/ruby.rb"
 
-```
-
-## Double dash ?
+# Install this package from local folder
+npm i path-to-this-project-folder -g
+# if in this project folder, simply do:
+npm i . -g
+# Use double dash to pass flags in dev:
+npm run start -- --version  # will become: lll --version
 https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean
-
-LLL works with or without a double dash before the command.
-
-```sh
-# Works with the double dash too:
-lll -- "node ./examples/node-app/index"
 ```
 
 ## Related projects

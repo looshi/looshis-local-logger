@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const HERE = fileURLToPath(import.meta.url);
 const CLIENT_FILE_PATH = `${path.dirname(HERE)}/client.html`;
-
+const VERSION = 'LLL v1.0.3';
 const port = process.env.PORT || 3333;
 let client;  // allows only one client running at one time
 let rl;
@@ -20,7 +20,7 @@ http.createServer((req, res) => {
       'Connection': 'keep-alive',
       'Cache-Control': 'no-cache'
     });
-    sendMessage("LLL ready...")
+    sendMessage(VERSION)
   } else {
     const html = fs.readFileSync(CLIENT_FILE_PATH, 'utf8');
     res.end(html.replace("{{port}}", port));
@@ -43,15 +43,29 @@ function onData(data) {
   });
 }
 
-if (process.argv.length > 3) {
+if (process.argv[2]) {
   const [program, ...args] = process.argv[2].split(' ');
-  console.log("LLL spawning:", program, args);
+  if (program === "-v" || program === "--version") {
+    console.log(VERSION);
+    process.exit(0);
+  }
+  if (program === "-h" || program === "--help") {
+    console.log(`
+    Start listening for stdin:
+    lll
+    OR start an app:
+    lll "node ./examples/node-app/index"
+    Then navigate to localhost:3333 in your browser and open devtools.
+    `);
+    process.exit(0);
+  }
 
+  console.log("LLL spawning:", program, ...args);
   const child = spawn(program, args);
   child.stdout.on('data', onData);
   child.stderr.on('data', onData);
   child.on('close', (code) => {
-    const msg = `LLL child process exited with code ${code}`;
+    const msg = `LLL child process exited with code ${code} `;
     sendMessage(msg);
   });
 } else {
