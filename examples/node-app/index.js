@@ -12,5 +12,6 @@ log();
 const data = () => JSON.stringify({
   node: 'Example of a node app logging to stdout',
   time: Date.now(),
+  MY_VAR: process.env.MY_VAR,
 })
 const err = new Error('node.js example error');
