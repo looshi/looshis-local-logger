@@ -1,30 +1,59 @@
+<!DOCTYPE html>
 <html>
 
 <head>
   <title>LLL</title>
 </head>
+<style>
+  body {
+    background: #1c2023;
+    font-family: monospace, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+  }
 
-<body style="background: #1c2023; color: #bfb5a9; font-family: Arial, Helvetica, sans-serif;margin:0;">
-  <p id="status"></p>
+  p {
+    margin: 0;
+  }
+
+  a,
+  a:visited,
+  a:active {
+    color: #988874;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: white;
+  }
+
+</style>
+
+<body>
+  <header>
+    <p>
+      <a href="https://github.com/looshi/looshis-local-logger" referrerpolicy="origin" target="_blank">
+        Looshi's Local Logger v1.1.0
+      </a>
+    </p>
+    <p id="status"></p>
+  </header>
 
   <script>
     const status = document.getElementById('status');
     const es = new EventSource('http://localhost:{{port}}/events');
-    let eCount = 0;
 
     es.addEventListener('open', (message) => {
       status.textContent = "Connected";
-      status.setAttribute('style', "color: lightgreen; border-top: 6px solid lightgreen;");
+      status.setAttribute('style', "color: #60ba5d; ");
     });
 
     es.addEventListener('error', (message) => {
       status.textContent = "Not connected";
-      status.setAttribute('style', "color: orange; border-top: 6px solid orange;");
+      status.setAttribute('style', "color: orange;");
     });
 
     es.addEventListener('message', (message) => {
-      eCount = eCount + 1;
-      status.textContent = `Connected, lines received: ${eCount}`;
+      status.textContent = "Connected";
       try {
         var obj = JSON.parse(message.data);
         if (typeof obj == 'string') {
