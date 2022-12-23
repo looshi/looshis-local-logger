@@ -5,7 +5,10 @@ Stream terminal output to the browser devtools!
 
 ![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
-This package has no dependencies and is less than 100 lines of code.
+This package has no dependencies and is less than 150 lines of code.
+
+## Why ?
+Leverage the browser's devtool features like JSON object inspector and filtering for your raw terminal output.
 
 ## Install
 ```sh
@@ -13,35 +16,45 @@ npm i -g looshis-local-logger
 ```
 
 ## How To Use
-Run `lll` as shown below, open browser at http://localhost:3333, open devtools.
+
+When run standalone, LLL will listen for stdin and send output to the browser:
 
 ```sh
-# Start a node app
-lll -- "node ./examples/node-app/index"
-
-# Run npm script
-lll -- "npm --prefix ./examples/node-app run start"
-
-# Start a ruby app
-lll -- "ruby ./examples/ruby-app/ruby.rb"
-
-# Specify a port
-PORT=1234 lll -- "npm --prefix ./examples/node-app run start"
- # Open browser at: http://localhost:1234/
+# Start LLL , then make a request via curl.
+lll
+curl -s https://swapi.dev/api/planets/1/?format=wookiee \
+  -H "Accept: application/json"
+# Open browser at http://localhost:3333, open devtools.
 ```
 
-## Alternatives:
+When a command is given, LLL will send the command's output to the browser:
 
-V8 inspector for Node.js
-https://nodejs.org/api/debugger.html#v8-inspector-integration-for-nodejs
+```sh
+# Start a node app:
+lll "node ./examples/node-app/index"
+# Open browser at http://localhost:3333, open devtools.
 
-IDE plugins
+# Run npm script:
+lll "npm --prefix ./examples/node-app run start"
+# Open browser at http://localhost:3333, open devtools.
 
-etc.
+# Start a ruby app:
+lll "ruby ./examples/ruby-app/ruby.rb"
+# Open browser at http://localhost:3333, open devtools.
+
+# Specify a port:
+PORT=1234 lll -- "npm --prefix ./examples/node-app run start"
+ # Open browser at: http://localhost:1234/, open devtools.
+```
+
+CTRL+C to exit.
+
+## How it works
+The server will spawn the given command in a subprocess.  The subprocess stdout/stderr events are then sent to the client via server-sent events.
+
+If no command is given the server listens for stdin, runs that command, and sends its sdtout/stderr to the client via server-sent events.
 
 ## Development Notes
-The server will `spawn` an application in a subprocess.  The server listens for the subprocess stdout and stderr events and will send those messages to the client via server-sent events.
-
 Run the examples in development mode:
 
 ```sh
@@ -49,19 +62,37 @@ Run the examples in development mode:
 git clone https://github.com/looshi/looshis-local-logger.git
 
 # Start a node app
-npm run start -- "node ./examples/node-app/index"
+npm run start "node ./examples/node-app/index"
 
 # Run npm script
-npm run start -- "npm --prefix ./examples/node-app run start"
+npm run start "npm --prefix ./examples/node-app run start"
 
 # Specify a port
-PORT=1234 npm run start -- "npm --prefix ./examples/node-app run start"
+PORT=1234 npm run start "npm --prefix ./examples/node-app run start"
  # http://localhost:1234/
 
 # Start a ruby app
-npm run start -- "ruby ./looshis-local-logger/examples/ruby-app/ruby.rb"
+npm run start "ruby ./examples/ruby-app/ruby.rb"
 
 ```
+
+## Double dash ?
+https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean
+
+LLL works with or without a double dash before the command.
+
+```sh
+# Works with the double dash too:
+lll -- "node ./examples/node-app/index"
+```
+
+## Related projects
+
+Older project that is web socket based, pretty cool:
+
+https://www.npmjs.com/package/shoe
+
+https://github.com/thlorenz/hyperwatch
 
 ## Resources
 
