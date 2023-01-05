@@ -45,7 +45,7 @@ lll "npm --prefix ./examples/node-app run start"
 # Open browser at http://localhost:3333, open devtools.
 
 # Specify a port:
-PORT=1234 lll "npm --prefix ./examples/node-app run start"
+LLL_PORT=1234 lll "npm --prefix ./examples/node-app run start"
  # Open browser at: http://localhost:1234/, open devtools.
 
 # Start a ruby app:
@@ -58,59 +58,9 @@ MY_VAR=3 lll "node ./examples/node-app/index"
 ```
 
 ## How it works
-The server will spawn the given command in a subprocess.  The subprocess stdout/stderr events are then sent to the client via server-sent events.
+LLL is a lightweight node application that essentially captures stdout and serves it down to an html client.  LLL works slightly different depending on whether you pass it args ( spawn ) or not ( standalone ).
 
-If no command is given the server listens for stdin, runs that command, and sends its sdtout/stderr to the client via server-sent events.
+When given a command, LLL will spawn the given command in a subprocess.  The subprocess stdout/stderr events are then sent to a browser-based client via [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
 
-## Development Notes
-Run the examples in development mode:
 
-```sh
-# Download the source
-git clone https://github.com/looshi/looshis-local-logger.git
-
-# Start a node app
-npm run start "node ./examples/node-app/index"
-
-# Run npm script
-npm run start "npm --prefix ./examples/node-app run start"
-
-# Specify a port
-PORT=1234 npm run start "npm --prefix ./examples/node-app run start"
- # http://localhost:1234/
-
-# Start a ruby app
-npm run start "ruby ./examples/ruby-app/ruby.rb"
-
-# Install this package from local folder
-npm i path-to-this-project-folder -g
-# if in this project folder, simply do:
-npm i . -g
-# Use double dash to pass flags in dev:
-npm run start -- --version  # will become: lll --version
-https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean
-```
-
-## Related projects
-
-Older project that is web socket based, pretty cool:
-
-https://www.npmjs.com/package/shoe
-
-https://github.com/thlorenz/hyperwatch
-
-## Resources
-
-Server Sent Events
-
-https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
-
-Child Process
-
-https://nodejs.org/api/child_process.html#child-process
-
-> If the subprocess writes to stdout in excess of that limit without the output being captured, the subprocess blocks waiting for the pipe buffer to accept more data.
-
-Something to keep in mind that running as a subprocess can affect performance / behavior.
-
-https://github.com/samerbuna/efficient-node/blob/main/500-child-processes.adoc
+If no command is given, the server listens for stdin, runs that command, and sends its sdtout/stderr to the client via [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
