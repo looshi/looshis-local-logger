@@ -1,9 +1,8 @@
-
 # Developer Notes
 
 ## How to Install LLL and run example apps in development mode:
 
-Included in this examples folder are a couple of apps that will log some json as well as some errors on a timer just to demonstrate how those come through to the client app.  There are also curl examples which can be used to test LLL in standalone mode.
+Included in this examples folder are a couple of apps that will log some json as well as some errors on a timer just to demonstrate how those come through to the client app. There are also curl examples which can be used to test LLL in standalone mode.
 
 ```sh
 # Download the source
@@ -12,8 +11,8 @@ git clone https://github.com/looshi/looshis-local-logger.git
 # Start a node app
 npm run start "node ./examples/node-app/index"
 
-# Run npm script
-npm run start "npm --prefix ./examples/node-app run start"
+# Run npm script with env vars to be passed to child process
+MY_VAR=42 npm run start "npm --prefix ./examples/node-app run start"
 
 # Specify a port
 LLL_PORT=1234 npm run start "npm --prefix ./examples/node-app run start"

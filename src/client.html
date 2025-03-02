@@ -1,70 +1,115 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>LLL</title>
+  </head>
+  <style>
+    :root {
+      color-scheme: light dark;
+      accent-color: #368d59;
+      font-family: monospace, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
 
-<head>
-  <title>LLL</title>
-</head>
-<style>
-  body {
-    background: #1c2023;
-    font-family: monospace, Arial, Helvetica, sans-serif;
-    font-size: 12px;
-  }
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-  p {
-    margin: 0;
-  }
+    body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
 
-  a,
-  a:visited,
-  a:active {
-    color: #988874;
-    text-decoration: none;
-  }
+    header {
+      flex-shrink: 0;
+      height: 140px;
+      padding: 20px;
+    }
 
-  a:hover {
-    color: white;
-  }
+    main {
+      flex-grow: 1;
+      overflow: auto;
+      min-height: 2em;
+    }
 
-</style>
+    footer {
+      flex-shrink: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
 
-<body>
-  <header>
-    <p>
-      <a href="https://github.com/looshi/looshis-local-logger" referrerpolicy="origin" target="_blank">
-        Looshi's Local Logger v1.2.0
-      </a>
-    </p>
-    <p id="status"></p>
-  </header>
+    p {
+      margin: 0;
+      padding: 4px 20px;
+    }
+    pre {
+      padding: 16px 20px;
+      color: light-dark(#0f181a, #a0a09f);
+      background-color: light-dark(#a0a09f, #0f181a);
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
 
-  <script>
-    const status = document.getElementById('status');
-    const es = new EventSource('http://localhost:{{port}}/events');
+  <body>
+    <header>header</header>
+    <main>main area</main>
+    <footer>
+      <p id="status"></p>
+      <p>
+        <a
+          href="https://github.com/looshi/looshis-local-logger"
+          referrerpolicy="origin"
+          target="_blank"
+        >
+          Looshi's Local Logger v2.0.0
+        </a>
+      </p>
+    </footer>
 
-    es.addEventListener('open', (message) => {
-      status.textContent = "Connected";
-      status.setAttribute('style', "color: #60ba5d; ");
-    });
+    <script>
+      const main = document.getElementsByTagName("main")[0];
+      function addLog(msg) {
+        msg = msg.split("NEW_LINE_CHARACTER").join("\n");
+        const pre = document.createElement("pre");
+        pre.textContent = msg;
+        main.prepend(pre);
+      }
+      const status = document.getElementById("status");
+      const es = new EventSource("http://localhost:{{port}}/events");
 
-    es.addEventListener('error', (message) => {
-      status.textContent = "Not connected";
-      status.setAttribute('style', "color: orange;");
-    });
+      es.addEventListener("open", (message) => {
+        status.textContent = "Connected";
+        status.setAttribute("style", "color: #60ba5d; ");
+      });
 
-    es.addEventListener('message', (message) => {
-      status.textContent = "Connected";
-      try {
-        var obj = JSON.parse(message.data);
-        if (typeof obj == 'string') {
-          obj = JSON.parse(obj); // If the json was double stringified, double parse here
+      es.addEventListener("error", (message) => {
+        status.textContent = "Not connected";
+        status.setAttribute("style", "color: orange;");
+      });
+
+      es.addEventListener("message", (message) => {
+        status.textContent = "Connected";
+        try {
+          let obj = JSON.parse(message.data);
+          if (typeof obj == "string") {
+            obj = JSON.parse(obj); // If the json was double stringified, double parse
+          }
+          addLog(message.data);
+        } catch (e) {
+          addLog(message.data);
         }
-        console.log(obj);
-      } catch (e) {
-        console.log(message.data);
-      };
-    })
-  </script>
-</body>
-
+      });
+    </script>
+  </body>
 </html>
