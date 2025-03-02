@@ -12,6 +12,6 @@ const data = () =>
     node: "Example of a node app logging to stdout",
     time: Date.now(),
     MY_VAR: process.env.MY_VAR,
-    large_array: Array(200).fill("cats"),
+    large_array: Array(10).fill("cats"),
   });
 const err = new Error("node.js example error");

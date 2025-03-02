@@ -28,8 +28,7 @@
 
     header {
       flex-shrink: 0;
-      height: 140px;
-      padding: 20px;
+      padding: 20px 20px 0;
     }
 
     main {
@@ -51,8 +50,8 @@
       margin: 0;
       padding: 4px 20px;
     }
-    div {
-      margin: 16px 0;
+    .log {
+      margin: 0 0 16px;
       padding: 16px 20px;
       color: light-dark(#0f181a, #f3dcff);
       background-color: light-dark(#f7f6f6, #19151a);
@@ -60,13 +59,28 @@
       border-bottom: 1px solid #38313a;
       white-space: pre;
     }
+    pre {
+      color: light-dark(#0f181a, #f3dcff);
+    }
+    code {
+      display: block;
+      padding: 8px 0;
+      margin: 0;
+    }
     a {
       text-decoration: none;
     }
   </style>
 
   <body>
-    <header></header>
+    <header>
+      <label for="filter-function">Filter Function</label>
+      <pre>(log) => {
+        <code contentEditable="true" id="filter-function">    return log;</code>
+}
+        <code style="color:rgb(199, 68, 68)" id="filter-function-error"></code>
+      </pre>
+    </header>
     <main></main>
     <footer>
       <p id="status"></p>
@@ -82,28 +96,67 @@
     </footer>
 
     <script>
+      const allLogs = [];
+      const filterFunctionEl = document.getElementById("filter-function");
+      const filterFunctionErrorEl = document.getElementById(
+        "filter-function-error"
+      );
       const main = document.getElementsByTagName("main")[0];
 
-      function addLog(log) {
-        const msg = log
-          .split("NEW_LINE_CHARACTER")
-          .map((line) => {
-            try {
-              let obj = JSON.parse(line);
-              if (typeof obj == "string") {
-                obj = JSON.parse(obj); // If the json was double stringified, double parse
-              }
-              return JSON.stringify(obj, null, 2);
-            } catch (e) {
-              return line;
-            }
-          })
-          .join("\n");
+      filterFunctionEl.addEventListener("keyup", () => {
+        render(allLogs);
+      });
 
-        const div = document.createElement("div");
-        div.innerText = msg;
-        main.prepend(div);
+      function render(logs) {
+        filterFunctionErrorEl.innerHTML = "";
+        let filteredLogs;
+        try {
+          const filterFunction = new Function(
+            "log",
+            filterFunctionEl.textContent
+          );
+          filteredLogs = logs.filter(filterFunction);
+        } catch (e) {
+          // Show an error message and show all logs when filter function has an error
+          filteredLogs = logs;
+          filterFunctionErrorEl.textContent = e.message;
+        }
+
+        const fragment = new DocumentFragment();
+        filteredLogs.forEach((log) => {
+          const div = document.createElement("div");
+          div.className = "log";
+          let txt;
+          if (typeof log === "string") {
+            txt = log;
+          } else {
+            try {
+              txt = JSON.stringify(log, null, 2);
+            } catch (e) {
+              txt = log;
+            }
+          }
+          div.innerText = txt;
+          fragment.prepend(div);
+        });
+        main.innerHTML = "";
+        main.appendChild(fragment);
       }
+
+      function parseLog(log) {
+        // JSON
+        try {
+          let obj = JSON.parse(log);
+          if (typeof obj == "string") {
+            obj = JSON.parse(obj); // If the json was double stringified, double parse
+          }
+          return obj;
+        } catch (e) {}
+
+        // String
+        return log.split("NEW_LINE_CHARACTER").join("\n");
+      }
+
       const status = document.getElementById("status");
       const es = new EventSource("http://localhost:{{port}}/events");
 
@@ -119,7 +172,8 @@
 
       es.addEventListener("message", (message) => {
         status.textContent = "Connected";
-        addLog(message.data);
+        allLogs.push(parseLog(message.data));
+        render(allLogs);
       });
     </script>
   </body>
