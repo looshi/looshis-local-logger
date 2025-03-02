@@ -8,7 +8,7 @@
       color-scheme: light dark;
       accent-color: #368d59;
       font-family: monospace, Arial, Helvetica, sans-serif;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     html,
@@ -51,10 +51,14 @@
       margin: 0;
       padding: 4px 20px;
     }
-    pre {
+    div {
+      margin: 16px 0;
       padding: 16px 20px;
-      color: light-dark(#0f181a, #a0a09f);
-      background-color: light-dark(#a0a09f, #0f181a);
+      color: light-dark(#0f181a, #f3dcff);
+      background-color: light-dark(#f7f6f6, #19151a);
+      border-top: 1px solid #38313a;
+      border-bottom: 1px solid #38313a;
+      white-space: pre;
     }
     a {
       text-decoration: none;
@@ -62,8 +66,8 @@
   </style>
 
   <body>
-    <header>header</header>
-    <main>main area</main>
+    <header></header>
+    <main></main>
     <footer>
       <p id="status"></p>
       <p>
@@ -79,11 +83,26 @@
 
     <script>
       const main = document.getElementsByTagName("main")[0];
-      function addLog(msg) {
-        msg = msg.split("NEW_LINE_CHARACTER").join("\n");
-        const pre = document.createElement("pre");
-        pre.textContent = msg;
-        main.prepend(pre);
+
+      function addLog(log) {
+        const msg = log
+          .split("NEW_LINE_CHARACTER")
+          .map((line) => {
+            try {
+              let obj = JSON.parse(line);
+              if (typeof obj == "string") {
+                obj = JSON.parse(obj); // If the json was double stringified, double parse
+              }
+              return JSON.stringify(obj, null, 2);
+            } catch (e) {
+              return line;
+            }
+          })
+          .join("\n");
+
+        const div = document.createElement("div");
+        div.innerText = msg;
+        main.prepend(div);
       }
       const status = document.getElementById("status");
       const es = new EventSource("http://localhost:{{port}}/events");
@@ -100,15 +119,7 @@
 
       es.addEventListener("message", (message) => {
         status.textContent = "Connected";
-        try {
-          let obj = JSON.parse(message.data);
-          if (typeof obj == "string") {
-            obj = JSON.parse(obj); // If the json was double stringified, double parse
-          }
-          addLog(message.data);
-        } catch (e) {
-          addLog(message.data);
-        }
+        addLog(message.data);
       });
     </script>
   </body>
