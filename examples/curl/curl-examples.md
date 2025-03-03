@@ -2,13 +2,8 @@
 
 Curl Examples to test with when LLL is started with no args.
 
-When using curl for responses formatted as json, you can use the browser's object expander and UI to find things within the object.
-
-As of now, the curl progress output doesn't look great in the browser devtools, so most of these examples are shown using the -s "silent" option of curl.
-https://curl.se/docs/manpage.html#-s
-
-
 ### JSON responses from Star Wars Api
+
 ```sh
 curl -s https://swapi.dev/api/planets/ \
   -H "Accept: application/json"
@@ -21,6 +16,7 @@ curl -s https://swapi.dev/api/planets/1/?format=wookiee \
 ```
 
 ### POSTs
+
 ```sh
 # A post to json placeholder with json body
 curl -s -X POST -H "Content-Type: application/json" \
@@ -29,6 +25,7 @@ curl -s -X POST -H "Content-Type: application/json" \
 ```
 
 ### Wordy requests
+
 ```sh
 # Some image from github's home page
 curl -sv 'https://github.com/fluidicon.png'  \

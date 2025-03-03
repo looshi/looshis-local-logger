@@ -29,6 +29,9 @@
     header {
       flex-shrink: 0;
       padding: 20px 20px 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
     }
 
     main {
@@ -79,6 +82,20 @@
       display: block;
       padding: 8px;
       margin: 0;
+      transition: all 0.2s ease;
+      outline: 2px solid transparent;
+      min-width: 300px;
+    }
+
+    code:hover,
+    code:focus {
+      outline: 2px solid #564b58;
+    }
+
+    .error-message {
+      color: light-dark(#8a2727, #f05050);
+      min-height: 1em;
+      padding: 8px 0;
     }
     a {
       text-decoration: none;
@@ -87,19 +104,23 @@
 
   <body>
     <header>
-      <label for="filter-function">Filter Function</label>
-      <div class="filter-function-area">
-        (log) => {<code
-          contentEditable="true"
-          id="filter-function"
-          spellcheck="false"
-          >return log;</code
-        >}<code
-          style="color: rgb(199, 68, 68)"
-          id="filter-function-error"
-        ></code>
+      <div>
+        <label for="filter-function">Filter Function</label>
+        <div class="filter-function-area">
+          (log) => {<code
+            contentEditable="true"
+            id="filter-function"
+            spellcheck="false"
+            >return log;</code
+          >}
+          <div class="error-message" id="filter-function-error"></div>
+        </div>
       </div>
       <div class="main-controls">
+        <label for="parse-json-checkbox"
+          >Format JSON
+          <input type="checkbox" checked id="parse-json-checkbox" />
+        </label>
         <button id="clear-btn">Clear</button>
         <span id="filter-count"></span>
       </div>
@@ -120,11 +141,15 @@
 
     <script>
       const allLogs = [];
+      const STATE = {
+        FORMAT_JSON: true,
+      };
       const filterFunctionEl = document.getElementById("filter-function");
       const filterFunctionErrorEl = document.getElementById(
         "filter-function-error"
       );
       const clearButton = document.getElementById("clear-btn");
+      const parseJsonCheckbox = document.getElementById("parse-json-checkbox");
       const main = document.getElementsByTagName("main")[0];
 
       filterFunctionEl.addEventListener("keyup", () => {
@@ -136,9 +161,15 @@
         render(allLogs);
       });
 
+      parseJsonCheckbox.addEventListener("change", (event) => {
+        STATE.FORMAT_JSON = event.target.checked;
+        render(allLogs);
+      });
+
       function render(logs) {
         filterFunctionErrorEl.innerHTML = "";
         let filteredLogs;
+
         try {
           const filterFunction = new Function(
             "log",
@@ -149,6 +180,20 @@
           // Show an error message and show all logs when filter function has an error
           filteredLogs = logs;
           filterFunctionErrorEl.textContent = e.message;
+        }
+
+        if (STATE.FORMAT_JSON) {
+          filteredLogs = filteredLogs.map((log) => {
+            try {
+              let obj = JSON.parse(log);
+              // if (typeof obj == "string") {
+              //   obj = JSON.parse(obj); // If the json was double stringified, double parse
+              // }
+              return obj;
+            } catch (e) {}
+
+            return log;
+          });
         }
 
         const logCountMessage =
@@ -179,16 +224,6 @@
       }
 
       function parseLog(log) {
-        // JSON
-        try {
-          let obj = JSON.parse(log);
-          if (typeof obj == "string") {
-            obj = JSON.parse(obj); // If the json was double stringified, double parse
-          }
-          return obj;
-        } catch (e) {}
-
-        // String
         return log.split("NEW_LINE_CHARACTER").join("\n");
       }
 
