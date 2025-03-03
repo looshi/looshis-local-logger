@@ -38,6 +38,8 @@
     }
     label {
       color: light-dark(#5a909c, #858088);
+      padding-bottom: 4px;
+      display: block;
     }
 
     footer {
@@ -58,7 +60,7 @@
       color: light-dark(#5a909c, #858088);
     }
     button {
-      margin: 2px 0;
+      margin: 0 0 6px 0;
       opacity: 0.8;
     }
     .log {
@@ -70,7 +72,7 @@
       border-bottom: 1px solid #38313a;
       white-space: pre;
     }
-    pre {
+    .filter-function-area {
       color: light-dark(#0f181a, #f3dcff);
     }
     code {
@@ -86,8 +88,17 @@
   <body>
     <header>
       <label for="filter-function">Filter Function</label>
-      <pre>(log) => {<code contentEditable="true" id="filter-function" spellcheck="false">return log;</code>}
-      <code style="color:rgb(199, 68, 68)" id="filter-function-error"></code></pre>
+      <div class="filter-function-area">
+        (log) => {<code
+          contentEditable="true"
+          id="filter-function"
+          spellcheck="false"
+          >return log;</code
+        >}<code
+          style="color: rgb(199, 68, 68)"
+          id="filter-function-error"
+        ></code>
+      </div>
       <div class="main-controls">
         <button id="clear-btn">Clear</button>
         <span id="filter-count"></span>
