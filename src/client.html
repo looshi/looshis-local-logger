@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
     <title>LLL</title>
   </head>
   <style>
     :root {
       color-scheme: light dark;
-      accent-color: #368d59;
+      accent-color: #60ba5d;
       font-family: monospace, Arial, Helvetica, sans-serif;
       font-size: 14px;
     }
@@ -24,14 +24,16 @@
       display: flex;
       flex-direction: column;
       flex-wrap: nowrap;
+      background-color: light-dark(#ccc, #282828);
     }
 
     header {
       flex-shrink: 0;
-      padding: 20px 20px 0;
+      padding: 24px 24px 0;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
+      color: light-dark(#5a909c, #aaa7ac);
     }
 
     main {
@@ -40,7 +42,7 @@
       min-height: 2em;
     }
     label {
-      color: light-dark(#5a909c, #858088);
+      color: light-dark(#5a909c, #c8c6c9);
       padding-bottom: 4px;
       display: block;
     }
@@ -60,23 +62,23 @@
     }
     .main-controls {
       padding: 0 4px 2px;
-      color: light-dark(#5a909c, #858088);
+      color: light-dark(#5a909c, #c8c6c9);
     }
     button {
       margin: 0 0 6px 0;
-      opacity: 0.8;
+      color: white;
     }
     .log {
-      margin: 0 0 16px;
-      padding: 16px 20px;
-      color: light-dark(#0f181a, #e2d9e7);
-      background-color: light-dark(#f7f6f6, #19151a);
-      border-top: 1px solid #38313a;
-      border-bottom: 1px solid #38313a;
+      margin: 16px 24px;
+      padding: 16px;
+      color: light-dark(#0f181a, #c4b9b4);
+      background-color: light-dark(#f7f6f6, #1a191a);
       white-space: pre;
+      overflow-x: auto;
+      line-height: 1.3em;
     }
     .filter-function-area {
-      color: light-dark(#0f181a, #f3dcff);
+      color: light-dark(#0f181a, #b5c2ff);
     }
     code {
       display: block;
@@ -84,7 +86,6 @@
       margin: 0;
       transition: all 0.2s ease;
       outline: 2px solid transparent;
-      min-width: 300px;
     }
 
     code:hover,
@@ -116,16 +117,16 @@
           <div class="error-message" id="filter-function-error"></div>
         </div>
       </div>
+      <span id="filter-count"></span>
       <div class="main-controls">
         <label for="parse-json-checkbox"
           >Format JSON
           <input type="checkbox" checked id="parse-json-checkbox" />
         </label>
-        <button id="clear-btn">Clear</button>
-        <span id="filter-count"></span>
+        <button id="clear-btn">Clear Logs</button>
       </div>
     </header>
-    <main></main>
+    <main tabindex="0"></main>
     <footer>
       <p id="status"></p>
       <p>
@@ -151,6 +152,7 @@
       const clearButton = document.getElementById("clear-btn");
       const parseJsonCheckbox = document.getElementById("parse-json-checkbox");
       const main = document.getElementsByTagName("main")[0];
+      const status = document.getElementById("status");
 
       filterFunctionEl.addEventListener("keyup", () => {
         render(allLogs);
@@ -177,35 +179,28 @@
           );
           filteredLogs = logs.filter(filterFunction);
         } catch (e) {
-          // Show an error message and show all logs when filter function has an error
-          filteredLogs = logs;
           filterFunctionErrorEl.textContent = e.message;
+          filteredLogs = [];
         }
 
         if (STATE.FORMAT_JSON) {
           filteredLogs = filteredLogs.map((log) => {
             try {
-              let obj = JSON.parse(log);
-              // if (typeof obj == "string") {
-              //   obj = JSON.parse(obj); // If the json was double stringified, double parse
-              // }
-              return obj;
+              return JSON.parse(log);
             } catch (e) {}
 
             return log;
           });
         }
 
-        const logCountMessage =
-          filteredLogs.length !== allLogs.length
-            ? `${filteredLogs.length} of ${logs.length} total`
-            : `${logs.length} total`;
+        const logCountMessage = `Showing ${filteredLogs.length} of ${logs.length} total`;
         document.getElementById("filter-count").innerText = logCountMessage;
 
         const fragment = new DocumentFragment();
-        filteredLogs.forEach((log) => {
+        filteredLogs.forEach((log, i) => {
           const div = document.createElement("div");
           div.className = "log";
+          div.setAttribute("tabindex", filteredLogs.length + 1 - i);
           let txt;
           if (typeof log === "string") {
             txt = log;
@@ -219,6 +214,7 @@
           div.innerText = txt;
           fragment.prepend(div);
         });
+
         main.innerHTML = "";
         main.appendChild(fragment);
       }
@@ -227,7 +223,6 @@
         return log.split("NEW_LINE_CHARACTER").join("\n");
       }
 
-      const status = document.getElementById("status");
       const es = new EventSource("http://localhost:{{port}}/events");
 
       es.addEventListener("open", (message) => {
