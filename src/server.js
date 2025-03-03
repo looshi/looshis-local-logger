@@ -21,7 +21,6 @@ http
         Connection: "keep-alive",
         "Cache-Control": "no-cache",
       });
-      sendMessage(VERSION);
     } else {
       const html = fs.readFileSync(CLIENT_FILE_PATH, "utf8");
       res.end(html.replace("{{port}}", port));

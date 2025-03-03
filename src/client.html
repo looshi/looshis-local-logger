@@ -36,6 +36,9 @@
       overflow: auto;
       min-height: 2em;
     }
+    label {
+      color: light-dark(#5a909c, #858088);
+    }
 
     footer {
       flex-shrink: 0;
@@ -50,10 +53,18 @@
       margin: 0;
       padding: 4px 20px;
     }
+    .main-controls {
+      padding: 0 4px 2px;
+      color: light-dark(#5a909c, #858088);
+    }
+    button {
+      margin: 2px 0;
+      opacity: 0.8;
+    }
     .log {
       margin: 0 0 16px;
       padding: 16px 20px;
-      color: light-dark(#0f181a, #f3dcff);
+      color: light-dark(#0f181a, #e2d9e7);
       background-color: light-dark(#f7f6f6, #19151a);
       border-top: 1px solid #38313a;
       border-bottom: 1px solid #38313a;
@@ -64,7 +75,7 @@
     }
     code {
       display: block;
-      padding: 8px 0;
+      padding: 8px;
       margin: 0;
     }
     a {
@@ -75,11 +86,12 @@
   <body>
     <header>
       <label for="filter-function">Filter Function</label>
-      <pre>(log) => {
-        <code contentEditable="true" id="filter-function">    return log;</code>
-}
-        <code style="color:rgb(199, 68, 68)" id="filter-function-error"></code>
-      </pre>
+      <pre>(log) => {<code contentEditable="true" id="filter-function" spellcheck="false">return log;</code>}
+      <code style="color:rgb(199, 68, 68)" id="filter-function-error"></code></pre>
+      <div class="main-controls">
+        <button id="clear-btn">Clear</button>
+        <span id="filter-count"></span>
+      </div>
     </header>
     <main></main>
     <footer>
@@ -101,9 +113,15 @@
       const filterFunctionErrorEl = document.getElementById(
         "filter-function-error"
       );
+      const clearButton = document.getElementById("clear-btn");
       const main = document.getElementsByTagName("main")[0];
 
       filterFunctionEl.addEventListener("keyup", () => {
+        render(allLogs);
+      });
+
+      clearButton.addEventListener("click", () => {
+        allLogs.length = 0;
         render(allLogs);
       });
 
@@ -121,6 +139,12 @@
           filteredLogs = logs;
           filterFunctionErrorEl.textContent = e.message;
         }
+
+        const logCountMessage =
+          filteredLogs.length !== allLogs.length
+            ? `${filteredLogs.length} of ${logs.length} total`
+            : `${logs.length} total`;
+        document.getElementById("filter-count").innerText = logCountMessage;
 
         const fragment = new DocumentFragment();
         filteredLogs.forEach((log) => {
