@@ -2,7 +2,7 @@
 
 ## How to Install LLL and run example apps in development mode:
 
-Included in this examples folder are a couple of apps that will log some json as well as some errors on a timer just to demonstrate how those come through to the client app. There are also curl examples which can be used to test LLL in standalone mode.
+Included in this examples folder are a couple of apps that will log some json as well as some errors on a timer just to demonstrate how those come through to the client app.
 
 ```sh
 # Download the source

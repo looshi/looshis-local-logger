@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 import { spawn, exec } from "node:child_process";
-import readline from "readline";
 import http from "http";
 import fs from "fs";
 import path from "path";
@@ -41,7 +40,7 @@ function onStdOut(data) {
   sendMessage(msg);
 }
 
-if (process.argv[2]) {
+if (process.argv?.[2]) {
   // If command was passed, start the command as a subprocess and stream its output.
   const [program, ...args] = process.argv[2].split(" ");
   if (program === "-v" || program === "--version") {
@@ -80,30 +79,9 @@ if (process.argv[2]) {
     sendMessage(msg);
   });
 } else {
-  // If no command was passed, start LLL in standalone mode and listen for stdin.
-  let input = [];
-
-  rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    prompt: "LLL>",
-  });
-
-  rl.on("line", (line) => {
-    if (line.trim().length === 0) return;
-    input.push(line);
-
-    let tail = line[line.length - 1];
-    if (tail === "\\") return; // Wait until last char is NOT  "\" for multiline commands.
-    const cmd = input.join(" ").replace(/\\/g, "");
-    sendMessage(cmd);
-
-    exec(cmd, (error, stdout, stderr) => {
-      const output = error || stdout || stderr;
-      onStdOut(output);
-      console.log(output);
-      input = [];
-      rl.prompt();
-    });
-  });
+  console.error(`
+    Errror, could not start lll. Usage:
+    lll "node ./examples/node-app/index"
+    `);
+  process.exit(0);
 }
