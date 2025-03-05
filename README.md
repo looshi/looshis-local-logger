@@ -4,11 +4,11 @@
 
 Stream logs in the browser!
 
-LLL has no dependencies!
-
-![browser next to terminal](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
+![browser window showing logs](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
 LLL is a command line program to view and filter terminal output in a browser.
+
+LLL has no dependencies!
 
 ## Install
 

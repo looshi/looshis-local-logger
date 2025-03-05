@@ -5,7 +5,6 @@
   </head>
   <style>
     :root {
-      color-scheme: light dark;
       accent-color: #60ba5d;
       font-family: monospace, Arial, Helvetica, sans-serif;
       font-size: 14px;
@@ -24,16 +23,20 @@
       display: flex;
       flex-direction: column;
       flex-wrap: nowrap;
-      background-color: light-dark(#ccc, #282828);
+      background-color: #282828;
+      color: #aaa7ac;
     }
 
     header {
       flex-shrink: 0;
       padding: 24px 24px 0;
       display: flex;
-      align-items: flex-end;
       justify-content: space-between;
-      color: light-dark(#5a909c, #aaa7ac);
+    }
+
+    #filter-count {
+      text-align: center;
+      margin-bottom: 8px;
     }
 
     main {
@@ -41,8 +44,14 @@
       overflow: auto;
       min-height: 2em;
     }
+    .main-controls {
+      padding: 0 4px 2px;
+      text-align: right;
+      color: #c8c6c9;
+    }
+
     label {
-      color: light-dark(#5a909c, #c8c6c9);
+      color: #c8c6c9;
       padding-bottom: 4px;
       display: block;
     }
@@ -60,26 +69,28 @@
       margin: 0;
       padding: 4px 20px;
     }
-    .main-controls {
-      padding: 0 4px 2px;
-      color: light-dark(#5a909c, #c8c6c9);
-    }
+
     button {
-      margin: 0 0 6px 0;
-      color: white;
+      background: #555555;
+      color: #d1d1d1;
+      margin-top: 2px;
+      padding: 2px 8px;
     }
+
     .log {
       margin: 16px 24px;
       padding: 16px;
-      color: light-dark(#0f181a, #c4b9b4);
-      background-color: light-dark(#f7f6f6, #1a191a);
+      color: #c4b9b4;
+      background-color: #1a191a;
       white-space: pre;
       overflow-x: auto;
       line-height: 1.3em;
     }
+
     .filter-function-area {
-      color: light-dark(#0f181a, #b5c2ff);
+      color: #b5c2ff;
     }
+
     code {
       display: block;
       padding: 8px;
@@ -87,19 +98,20 @@
       transition: all 0.2s ease;
       outline: 2px solid transparent;
     }
-
     code:hover,
     code:focus {
       outline: 2px solid #564b58;
     }
 
     .error-message {
-      color: light-dark(#8a2727, #f05050);
+      color: #f05050;
       min-height: 1em;
       padding: 8px 0;
     }
+
     a {
       text-decoration: none;
+      color: #cca9f7;
     }
   </style>
 
@@ -117,7 +129,6 @@
           <div class="error-message" id="filter-function-error"></div>
         </div>
       </div>
-      <span id="filter-count"></span>
       <div class="main-controls">
         <label for="parse-json-checkbox"
           >Format JSON
@@ -126,6 +137,7 @@
         <button id="clear-btn">Clear Logs</button>
       </div>
     </header>
+    <div id="filter-count"></div>
     <main tabindex="0"></main>
     <footer>
       <p id="status"></p>
