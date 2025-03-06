@@ -53,11 +53,13 @@ if (process.argv?.[2]) {
     `);
     process.exit(0);
   }
-} else if (process.stdin.isTTY) {
-  // If lll is not part of a pipe and no args given
+  console.log(`unknown option ${option}`);
+  process.exit(0);
+} else if (process.stdin.isTTY || process.env.lll_testing_only === "cats") {
+  // if lll has no pipes before it, e.g. "lll" NOT "some_program | lll", exit early and show message to user
   console.error(`
-    Errror, could not start lll. Usage:
-    ./path-to-your-app |& lll
+    Error, could not start lll.
+    Usage: ./path-to-your-app |& lll
     `);
   process.exit(0);
 } else {
