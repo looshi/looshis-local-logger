@@ -87,6 +87,7 @@
       white-space: pre;
       overflow-x: auto;
       line-height: 1.3em;
+      position: relative;
     }
 
     .filter-function-area {
@@ -96,6 +97,7 @@
     }
     .filter-function-area:focus-within {
       border: 1px solid #c4ce97;
+      color: #c6c1c9;
     }
 
     #filter-function-error {
@@ -113,6 +115,9 @@
     li::marker {
       color: #34363e;
     }
+    .filter-function-area:focus-within li::marker {
+      color: #474a55;
+    }
 
     .error-message {
       color: #f05050;
@@ -126,23 +131,26 @@
     }
 
     #copyable-text {
-      color: #282828;
-      padding: 0;
-      margin: 0;
-      outline: 0;
-      border: none;
+      position: absolute;
+      left: -1000px;
+    }
+    #copy-button {
+      position: absolute;
+      top: 4px;
+      right: 4px;
     }
   </style>
 
   <body>
     <textarea id="copyable-text"></textarea>
+    <button id="copy-button">Copy</button>
     <header>
       <div>
         <div class="filter-function-area">
           <ol id="code-editor" contenteditable spellcheck="false">
             <li>function transform(logs){</li>
             <li>&nbsp;&nbsp;return logs.filter(log => {</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;return log;</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
             <li>&nbsp;&nbsp;});</li>
             <li>}</li>
           </ol>
@@ -202,8 +210,7 @@
       });
 
       // copy log to clipboard
-      const copyBtn = document.createElement("button");
-      copyBtn.innerText = "Copy";
+      const copyBtn = document.getElementById("copy-button");
       const copyableTextEl = document.getElementById("copyable-text");
       copyBtn.addEventListener("click", (e) => {
         copyableTextEl.value = e.target.parentNode.innerText.split("Copy")[1];
@@ -211,10 +218,13 @@
         document.execCommand("copy");
       });
       mainEl.addEventListener("mouseover", (e) => {
-        if (e.target.className === "log") {
-          const logEl = e.target;
-          logEl.prepend(copyBtn);
+        if (e.target.className === "log" && e.target.id !== "copy-button") {
+          copyBtn.setAttribute("style", "visibility: initial");
+          e.target.prepend(copyBtn);
         }
+      });
+      mainEl.addEventListener("mouseleave", (e) => {
+        copyBtn.setAttribute("style", "visibility: hidden");
       });
 
       function render(logs) {
