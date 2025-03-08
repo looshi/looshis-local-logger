@@ -92,6 +92,10 @@
     .filter-function-area {
       background: #1d1e22;
       padding: 8px 24px 0 0;
+      border: 1px solid #1d1e22;
+    }
+    .filter-function-area:focus-within {
+      border: 1px solid #c4ce97;
     }
 
     #filter-function-error {
@@ -104,10 +108,6 @@
       transition: all 0.2s ease;
       outline: 2px solid transparent;
       line-height: 1.4em;
-    }
-    #code-editor:hover,
-    #code-editor:focus {
-      outline: 2px solid #564b58;
     }
 
     li::marker {
@@ -146,9 +146,10 @@
             <li>&nbsp;&nbsp;});</li>
             <li>}</li>
           </ol>
-          <div class="error-message" id="filter-function-error"></div>
         </div>
+        <div class="error-message" id="filter-function-error"></div>
       </div>
+
       <div class="main-controls">
         <label for="parse-json-checkbox"
           >Format JSON
