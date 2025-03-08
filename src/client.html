@@ -11,6 +11,11 @@
       color-scheme: dark;
     }
 
+    ::selection {
+      background: #e4e471;
+      color: black;
+    }
+
     html,
     body {
       height: 100%;
@@ -85,19 +90,28 @@
     }
 
     .filter-function-area {
-      color: #b5c2ff;
+      background: #1d1e22;
+      padding: 8px 24px 0 0;
     }
 
-    code {
+    #filter-function-error {
+      background-color: #282828;
+      width: calc(100% + 24px);
+    }
+
+    #code-editor {
       display: block;
-      padding: 8px;
-      margin: 0;
       transition: all 0.2s ease;
       outline: 2px solid transparent;
+      line-height: 1.4em;
     }
-    code:hover,
-    code:focus {
+    #code-editor:hover,
+    #code-editor:focus {
       outline: 2px solid #564b58;
+    }
+
+    li::marker {
+      color: #34363e;
     }
 
     .error-message {
@@ -110,19 +124,28 @@
       text-decoration: none;
       color: #cca9f7;
     }
+
+    #copyable-text {
+      color: #282828;
+      padding: 0;
+      margin: 0;
+      outline: 0;
+      border: none;
+    }
   </style>
 
   <body>
+    <textarea id="copyable-text"></textarea>
     <header>
       <div>
-        <label for="filter-function">Filter Predicate</label>
         <div class="filter-function-area">
-          (log) => {<code
-            contentEditable="true"
-            id="filter-function"
-            spellcheck="false"
-            >return true;</code
-          >}
+          <ol id="code-editor" contenteditable spellcheck="false">
+            <li>function transform(logs){</li>
+            <li>&nbsp;&nbsp;return logs.filter(log => {</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;return log;</li>
+            <li>&nbsp;&nbsp;});</li>
+            <li>}</li>
+          </ol>
           <div class="error-message" id="filter-function-error"></div>
         </div>
       </div>
@@ -152,7 +175,7 @@
     <script>
       const allLogs = [];
       const STATE = { FORMAT_JSON: true };
-      const filterFunctionEl = document.getElementById("filter-function");
+      const filterFunctionEl = document.getElementById("code-editor");
       const filterFunctionErrorEl = document.getElementById(
         "filter-function-error"
       );
@@ -160,7 +183,7 @@
       const parseJsonCheckboxEl = document.getElementById(
         "parse-json-checkbox"
       );
-      const main = document.getElementsByTagName("main")[0];
+      const mainEl = document.getElementsByTagName("main")[0];
       const status = document.getElementById("status");
 
       filterFunctionEl.addEventListener("keyup", () => {
@@ -177,14 +200,33 @@
         render(allLogs);
       });
 
+      // copy log to clipboard
+      const copyBtn = document.createElement("button");
+      copyBtn.innerText = "Copy";
+      const copyableTextEl = document.getElementById("copyable-text");
+      copyBtn.addEventListener("click", (e) => {
+        copyableTextEl.value = e.target.parentNode.innerText.split("Copy")[1];
+        copyableTextEl.select();
+        document.execCommand("copy");
+      });
+      mainEl.addEventListener("mouseover", (e) => {
+        if (e.target.className === "log") {
+          const logEl = e.target;
+          logEl.prepend(copyBtn);
+        }
+      });
+
       function render(logs) {
         filterFunctionErrorEl.innerHTML = "";
         let filteredLogs;
 
         try {
-          filteredLogs = logs.filter(
-            new Function("log", filterFunctionEl.textContent)
+          const fn = new Function(
+            "all_logs",
+            filterFunctionEl.textContent + "return transform(all_logs);"
           );
+
+          filteredLogs = fn(logs);
         } catch (e) {
           filterFunctionErrorEl.textContent = e.message;
           filteredLogs = [];
@@ -222,8 +264,8 @@
           fragment.prepend(div);
         });
 
-        main.innerHTML = "";
-        main.appendChild(fragment);
+        mainEl.innerHTML = "";
+        mainEl.appendChild(fragment);
       }
 
       function parseLog(log) {
