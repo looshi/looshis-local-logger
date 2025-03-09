@@ -20,7 +20,7 @@ npm i -g looshis-local-logger
 
 ```sh
 ./path-to-your-app |& lll
-# LLL is ready at: http://localhost:1224 open in browser
+# LLL is ready at: http://localhost:4000 open in browser
 ```
 
 ### Examples

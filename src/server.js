@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const HERE = fileURLToPath(import.meta.url);
 const CLIENT_FILE_PATH = `${path.dirname(HERE)}/client.html`;
 const VERSION = "LLL v2.0.0";
-const port = process.env.LLL_PORT || 3333;
+const port = process.env.LLL_PORT || 4000;
 let client; // allows only one client running at one time
 
 http
@@ -49,7 +49,7 @@ if (process.argv?.[2]) {
     console.log(`
     Start your app and pipe its output to lll:
     ./path-to-your-app |& lll
-    Then navigate to localhost:3333 in your browser.
+    Then navigate to localhost:4000 in your browser.
     `);
     process.exit(0);
   }

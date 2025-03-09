@@ -14,7 +14,7 @@ npm --prefix ./examples/node-app run start |& npm run start
 MY_VAR=42 npm --prefix ./examples/node-app run start |& npm run start
 
 # Specify a port
-LLL_PORT=1234; npm --prefix ./examples/node-app run start |& npm run start
+npm --prefix ./examples/node-app run start |& LLL_PORT=1234 npm run start
  # http://localhost:1234/
 ```
 

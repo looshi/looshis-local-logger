@@ -22,7 +22,7 @@ test("serves stdin", options, (t, done) => {
   setTimeout(() => {
     const opts = {
       hostname: "localhost",
-      port: 3333,
+      port: 4000,
       path: "/events",
       method: "GET",
       headers: { Accept: "text/event-stream" },
