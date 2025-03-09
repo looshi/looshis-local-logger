@@ -109,7 +109,7 @@
       display: block;
       transition: all 0.2s ease;
       outline: 2px solid transparent;
-      line-height: 1.4em;
+      line-height: 1.6em;
     }
 
     li::marker {
@@ -139,6 +139,10 @@
       top: 4px;
       right: 4px;
     }
+    #transform-instructions {
+      font-style: italic;
+      opacity: 0.6;
+    }
   </style>
 
   <body>
@@ -147,7 +151,13 @@
     <header>
       <div>
         <div class="filter-function-area">
-          <ol id="code-editor" contenteditable spellcheck="false">
+          <p id="transform-instructions">// Filter, map, limit, etc. (JS).</p>
+          <ol
+            id="code-editor"
+            contenteditable
+            spellcheck="false"
+            aria-describedby="transform-instructions"
+          >
             <li>function transform(logs){</li>
             <li>&nbsp;&nbsp;return logs.filter(log => {</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
