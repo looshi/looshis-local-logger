@@ -19,7 +19,7 @@ npm i -g looshis-local-logger
 ## How To Use
 
 ```sh
-./path-to-your-app |& lll
+./your-app |& lll
 # LLL is ready at: http://localhost:4000 open in browser
 ```
 
@@ -27,14 +27,17 @@ npm i -g looshis-local-logger
 
 ```sh
 # Pipe standard error in addition to standard output to lll.
-npm run start |& lll
+./your-app  |& lll
 
-# Pipe only standard output to lll.
-npm run start | lll
+# Pipe only standard output to lll, ignore standard error
+./your-app | lll
 
 # Specify a different port for lll
-LLL_PORT=1234; npm run start |& lll
+/your-app |& LLL_PORT=1234 lll
  # http://localhost:1234
+
+# Run an npm script
+npm run start |& lll
 
 # Start a ruby app
 ruby ./ruby.rb |& lll
