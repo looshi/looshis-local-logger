@@ -1,9 +1,10 @@
 {
   "name": "looshis-local-logger",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "View terminal output in browser",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "node --unhandled-rejections=strict --test ./test/index.test.js"
   },
   "bin": {
     "lll": "src/server.js"
@@ -14,5 +15,8 @@
   },
   "type": "module",
   "author": "looshi",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

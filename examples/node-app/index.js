@@ -1,17 +1,17 @@
 function log() {
-  const time = Math.round(Math.random() * 4000);
+  const time = Math.ceil(Math.random() * 3);
   setTimeout(() => {
-    time % 3 == 0 ?
-      console.log(data()) :
-      console.error(err);
+    time === 1 ? console.error(err) : console.log(data());
     log();
-  }, time)
+  }, time * 500);
 }
 log();
 
-const data = () => JSON.stringify({
-  node: 'Example of a node app logging to stdout',
-  time: Date.now(),
-  MY_VAR: process.env.MY_VAR,
-})
-const err = new Error('node.js example error');
+const data = () =>
+  JSON.stringify({
+    node: "Example of a node app logging to stdout",
+    time: Date.now(),
+    MY_VAR: process.env.MY_VAR,
+    large_array: Array(10).fill("cats"),
+  });
+const err = new Error("node.js example error");

@@ -1,70 +1,345 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
+  <head>
+    <title>LLL</title>
+  </head>
+  <style>
+    :root {
+      accent-color: #60ba5d;
+      font-family: monospace, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color-scheme: dark;
+    }
 
-<head>
-  <title>LLL</title>
-</head>
-<style>
-  body {
-    background: #1c2023;
-    font-family: monospace, Arial, Helvetica, sans-serif;
-    font-size: 12px;
-  }
+    ::selection {
+      background: #e4e471;
+      color: black;
+    }
 
-  p {
-    margin: 0;
-  }
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-  a,
-  a:visited,
-  a:active {
-    color: #988874;
-    text-decoration: none;
-  }
+    body {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      background-color: #282828;
+      color: #aaa7ac;
+    }
 
-  a:hover {
-    color: white;
-  }
+    header {
+      flex-shrink: 0;
+      padding: 24px 24px 0;
+      display: flex;
+      justify-content: space-between;
+    }
 
-</style>
+    #filter-count {
+      text-align: center;
+      margin-bottom: 8px;
+    }
 
-<body>
-  <header>
-    <p>
-      <a href="https://github.com/looshi/looshis-local-logger" referrerpolicy="origin" target="_blank">
-        Looshi's Local Logger v1.2.0
-      </a>
-    </p>
-    <p id="status"></p>
-  </header>
+    main {
+      flex-grow: 1;
+      overflow: auto;
+      min-height: 2em;
+    }
+    .main-controls {
+      padding: 0 4px 2px;
+      text-align: right;
+      color: #c8c6c9;
+    }
 
-  <script>
-    const status = document.getElementById('status');
-    const es = new EventSource('http://localhost:{{port}}/events');
+    label {
+      color: #c8c6c9;
+      padding-bottom: 4px;
+      display: block;
+    }
 
-    es.addEventListener('open', (message) => {
-      status.textContent = "Connected";
-      status.setAttribute('style', "color: #60ba5d; ");
-    });
+    footer {
+      flex-shrink: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-    es.addEventListener('error', (message) => {
-      status.textContent = "Not connected";
-      status.setAttribute('style', "color: orange;");
-    });
+    p {
+      margin: 0;
+      padding: 4px 20px;
+    }
 
-    es.addEventListener('message', (message) => {
-      status.textContent = "Connected";
-      try {
-        var obj = JSON.parse(message.data);
-        if (typeof obj == 'string') {
-          obj = JSON.parse(obj); // If the json was double stringified, double parse here
+    button {
+      margin-top: 2px;
+      padding: 2px 8px;
+    }
+
+    .log {
+      margin: 16px 24px;
+      padding: 16px;
+      color: #cec4c0;
+      background-color: #1a191a;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.3em;
+      position: relative;
+    }
+
+    .filter-function-area {
+      background: #1d1e22;
+      padding: 8px 24px 0 0;
+      border: 1px solid #1d1e22;
+    }
+    .filter-function-area:focus-within {
+      border: 1px solid #c4ce97;
+      color: #c6c1c9;
+    }
+
+    #filter-function-error {
+      background-color: #282828;
+      width: calc(100% + 24px);
+    }
+
+    #code-editor {
+      display: block;
+      transition: all 0.2s ease;
+      outline: 2px solid transparent;
+      line-height: 1.6em;
+    }
+    ol {
+      counter-reset: item;
+      list-style-type: none;
+      padding-left: 20px;
+    }
+
+    li:before {
+      content: counter(item) "  ";
+      counter-increment: item;
+      color: #34363e;
+    }
+    li::marker {
+      color: #34363e;
+    }
+    .filter-function-area:focus-within li::marker {
+      color: #474a55;
+    }
+
+    .error-message {
+      color: #f05050;
+      min-height: 1em;
+      padding: 8px 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: #cca9f7;
+    }
+
+    #copyable-text {
+      position: absolute;
+      left: -1000px;
+    }
+    #copy-button {
+      visibility: hidden;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+    }
+    #transform-instructions {
+      font-style: italic;
+      padding-right: 0;
+      color: rgb(115, 115, 115);
+    }
+    #transform-fn-status {
+      display: inline-block;
+      width: 14px;
+      text-align: right;
+    }
+  </style>
+
+  <body>
+    <textarea id="copyable-text"></textarea>
+    <button id="copy-button">Copy</button>
+    <header>
+      <div>
+        <div class="filter-function-area">
+          <p id="transform-instructions">
+            // Filter, map, limit, etc. (JS)<span
+              id="transform-fn-status"
+            ></span>
+          </p>
+          <ol
+            id="code-editor"
+            contenteditable
+            spellcheck="false"
+            aria-describedby="transform-instructions"
+          >
+            <li>function transform(logs){</li>
+            <li>&nbsp;&nbsp;return logs.filter(log => {</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+            <li>&nbsp;&nbsp;});</li>
+            <li>}</li>
+          </ol>
+        </div>
+        <div class="error-message" id="filter-function-error"></div>
+      </div>
+
+      <div class="main-controls">
+        <label for="parse-json-checkbox"
+          >Format JSON
+          <input type="checkbox" checked id="parse-json-checkbox" />
+        </label>
+        <button id="clear-btn">Clear Logs</button>
+      </div>
+    </header>
+    <div id="filter-count"></div>
+    <main tabindex="0"></main>
+    <footer>
+      <p id="status"></p>
+      <p>
+        <a
+          href="https://github.com/looshi/looshis-local-logger"
+          referrerpolicy="origin"
+          target="_blank"
+        >
+          Looshi's Local Logger v2.0.0
+        </a>
+      </p>
+    </footer>
+
+    <script>
+      const allLogs = [];
+      const STATE = { FORMAT_JSON: true, TRANSFORM_FN: (logs) => logs };
+      const filterFunctionEl = document.getElementById("code-editor");
+      const filterFunctionErrorEl = document.getElementById(
+        "filter-function-error"
+      );
+      const clearButtonEl = document.getElementById("clear-btn");
+      const parseJsonCheckboxEl = document.getElementById(
+        "parse-json-checkbox"
+      );
+      const mainEl = document.getElementsByTagName("main")[0];
+      const status = document.getElementById("status");
+      const transformFnStatusEl = document.getElementById(
+        "transform-fn-status"
+      );
+
+      let timeoutId;
+      filterFunctionEl.addEventListener("keyup", () => {
+        transformFnStatusEl.innerHTML = "...";
+        clearTimeout(timeoutId); // debounces
+        timeoutId = setTimeout(() => {
+          STATE.TRANSFORM_FN = new Function(
+            "all_logs",
+            filterFunctionEl.textContent + "return transform(all_logs);"
+          );
+          transformFnStatusEl.innerHTML = "&#x2713;";
+          render(allLogs);
+        }, 777);
+      });
+
+      clearButtonEl.addEventListener("click", () => {
+        allLogs.length = 0;
+        render(allLogs);
+      });
+
+      parseJsonCheckboxEl.addEventListener("change", (event) => {
+        STATE.FORMAT_JSON = event.target.checked;
+        render(allLogs);
+      });
+
+      // copy log to clipboard
+      const copyBtn = document.getElementById("copy-button");
+      const copyableTextEl = document.getElementById("copyable-text");
+      copyBtn.addEventListener("click", (e) => {
+        copyableTextEl.value = e.target.parentNode.innerText.split("Copy")[1];
+        copyableTextEl.select();
+        document.execCommand("copy");
+      });
+      mainEl.addEventListener("mouseover", (e) => {
+        if (e.target.className === "log" && e.target.id !== "copy-button") {
+          copyBtn.setAttribute("style", "visibility: visible");
+          e.target.prepend(copyBtn);
         }
-        console.log(obj);
-      } catch (e) {
-        console.log(message.data);
-      };
-    })
-  </script>
-</body>
+      });
+      mainEl.addEventListener("mouseleave", (e) => {
+        copyBtn.setAttribute("style", "visibility: hidden");
+      });
 
+      function render(logs) {
+        filterFunctionErrorEl.innerHTML = "";
+        let filteredLogs;
+
+        try {
+          filteredLogs = STATE.TRANSFORM_FN(logs);
+        } catch (e) {
+          transformFnStatusEl.innerHTML = "...";
+          filterFunctionErrorEl.textContent = e.message;
+          filteredLogs = [];
+        }
+
+        if (STATE.FORMAT_JSON) {
+          filteredLogs = filteredLogs.map((log) => {
+            try {
+              return JSON.parse(log);
+            } catch (e) {}
+
+            return log;
+          });
+        }
+
+        const logCountMessage = `Showing ${filteredLogs.length} of ${logs.length} total`;
+        document.getElementById("filter-count").innerText = logCountMessage;
+
+        const fragment = new DocumentFragment();
+        filteredLogs.forEach((log, i) => {
+          const div = document.createElement("div");
+          div.className = "log";
+          div.setAttribute("tabindex", filteredLogs.length + 1 - i);
+          let txt;
+          if (typeof log === "string") {
+            txt = log;
+          } else {
+            try {
+              txt = JSON.stringify(log, null, 2);
+            } catch (e) {
+              txt = log;
+            }
+          }
+          div.innerText = txt;
+          fragment.prepend(div);
+        });
+
+        mainEl.innerHTML = "";
+        mainEl.appendChild(fragment);
+      }
+
+      function parseLog(log) {
+        return log.split("NEW_LINE_CHARACTER").join("\n");
+      }
+
+      const es = new EventSource("http://localhost:{{port}}/events");
+
+      es.addEventListener("open", (message) => {
+        status.textContent = "Connected";
+        status.setAttribute("style", "color: #60ba5d; ");
+      });
+
+      es.addEventListener("error", (message) => {
+        status.textContent = "Not connected";
+        status.setAttribute("style", "color: orange;");
+      });
+
+      es.addEventListener("message", (message) => {
+        status.textContent = "Connected";
+        allLogs.push(parseLog(message.data));
+        render(allLogs);
+      });
+    </script>
+  </body>
 </html>
