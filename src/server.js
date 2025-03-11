@@ -32,9 +32,41 @@ function sendMessage(message) {
   client?.write(`data: ${message}\n\n`);
 }
 
+let lastGoodJSON = "";
+let isConcating = false;
 function onStdIn(data) {
-  const msg = data.toString().trim().split(`\n`).join("NEW_LINE_CHARACTER");
-  sendMessage(msg);
+  // If the data is probably an error that came in from stderr
+  if (data.startsWith("Error")) {
+    const msg = data.trim().split(`\n`).join("NEW_LINE_CHARACTER");
+    return sendMessage(msg);
+  }
+
+  data
+    .trim()
+    .split(`\n`)
+    .forEach((line) => {
+      // If the data is json-like start concatenating the chunks.
+      const isLargeJsonStart =
+        line.startsWith("{") &&
+        line.includes(":") &&
+        !line.endsWith("}") &&
+        line.length > 256;
+      if (isConcating === false && isLargeJsonStart) {
+        isConcating = true;
+      }
+      if (isConcating) {
+        try {
+          lastGoodJSON += line.trim();
+          // Done when the concatenated chunks can be parsed as one object.
+          JSON.parse(lastGoodJSON);
+          sendMessage(lastGoodJSON);
+          isConcating = false;
+          lastGoodJSON = "";
+        } catch (e) {}
+      } else {
+        sendMessage(line.trim());
+      }
+    });
 }
 
 if (process.argv?.[2]) {
@@ -63,6 +95,7 @@ if (process.argv?.[2]) {
     `);
   process.exit(0);
 } else {
+  process.stdin.setEncoding("utf8");
   process.stdin.on("data", onStdIn);
   process.stdin.pipe(process.stdout);
   process.stdin.on("close", () => {
