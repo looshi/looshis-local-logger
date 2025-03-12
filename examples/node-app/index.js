@@ -1,8 +1,10 @@
 function log() {
   const time = Math.ceil(Math.random() * 3);
   console.log("{ try to break the json: parser");
-  console.log({ small_log_A: true });
-  console.log({ small_log_B: false });
+  console.log(JSON.stringify({ small_log_A: true, stringified: true }));
+  console.log({ small_log_B: false, stringified: false });
+  console.log(JSON.stringify(["a", "small", "array"]));
+  console.log(JSON.stringify(["a", "large".repeat(1000), "array"]));
   setTimeout(() => {
     time === 1 ? console.error(err) : console.log(data());
     log();

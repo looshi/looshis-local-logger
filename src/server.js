@@ -51,9 +51,16 @@ function onStdIn(data) {
         line.includes(":") &&
         !line.endsWith("}") &&
         line.length > 256;
-      if (isConcating === false && isLargeJsonStart) {
+      const isLargeArrayStart =
+        line.startsWith("[") &&
+        line.includes(",") &&
+        line.length > 256 &&
+        !line.endsWith("]");
+
+      if (isConcating === false && (isLargeJsonStart || isLargeArrayStart)) {
         isConcating = true;
       }
+
       if (isConcating) {
         try {
           lastGoodJSON += line.trim();
