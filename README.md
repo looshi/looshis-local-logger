@@ -69,6 +69,8 @@ function transform(logs) {
 
 ## About
 
-lll attempts to organize logs visually. Large logs may sometimes span multiple blocks due to size limitations of piping stdin. lll does its best to keep large JSON-stringified logs in tact. Other kinds of large logs may span multiple blocks in the browser ouptput, e.g. ruby, python, or stderr Error output, in the future this could be addressed.
+lll is a command line utility that serves its stdin to a browser. lll is designed to be used for local development where a lot of logs are being generated and need to be filtered, formatted, copy/pasted, etc.
+
+lll attempts to organize logs visually. Large logs may sometimes span multiple blocks due to size limitations of piping stdin. lll does its best to keep large JSON-stringified logs in tact. Other kinds of large logs may span multiple blocks, but this may be fixed or addressed in the future.
 
 lll has no dependencies and uses only javascript, html, css, and the built in node Test runner.
