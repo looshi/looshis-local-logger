@@ -92,7 +92,7 @@
 
     .filter-function-area {
       background: #1d1e22;
-      padding: 8px 24px 0 0;
+      padding: 0 24px 0 0;
       border: 1px solid #1d1e22;
     }
     .filter-function-area:focus-within {
@@ -153,6 +153,7 @@
     #transform-instructions {
       font-style: italic;
       padding-right: 0;
+      padding-left: 0;
       color: rgb(115, 115, 115);
     }
     #transform-fn-status {
@@ -167,12 +168,10 @@
     <button id="copy-button">Copy</button>
     <header>
       <div>
+        <label id="transform-instructions" for="code_editor">
+          Filter, map, limit, etc. (JS)<span id="transform-fn-status"></span>
+        </label>
         <div class="filter-function-area">
-          <p id="transform-instructions">
-            // Filter, map, limit, etc. (JS)<span
-              id="transform-fn-status"
-            ></span>
-          </p>
           <ol
             id="code-editor"
             contenteditable
@@ -180,7 +179,7 @@
             aria-describedby="transform-instructions"
           >
             <li>function transform(logs){</li>
-            <li>&nbsp;&nbsp;return logs.filter(log => {</li>
+            <li>&nbsp;&nbsp;return logs.slice(-50).filter(log => {</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
             <li>&nbsp;&nbsp;});</li>
             <li>}</li>
@@ -197,7 +196,7 @@
         <button id="clear-btn">Clear Logs</button>
       </div>
     </header>
-    <div id="filter-count"></div>
+    <div id="filter-count">No logs yet</div>
     <main tabindex="0"></main>
     <footer>
       <p id="status"></p>
@@ -207,7 +206,7 @@
           referrerpolicy="origin"
           target="_blank"
         >
-          Looshi's Local Logger v2.0.0
+          Looshi's Local Logger v2.0.1
         </a>
       </p>
     </footer>
@@ -229,15 +228,20 @@
         "transform-fn-status"
       );
 
+      const updateTransformFn = () => {
+        STATE.TRANSFORM_FN = new Function(
+          "all_logs",
+          filterFunctionEl.textContent + "return transform(all_logs);"
+        );
+      };
+      updateTransformFn(); //Initializes transform fn to the default set in html above
+
       let timeoutId;
       filterFunctionEl.addEventListener("keyup", () => {
         transformFnStatusEl.innerHTML = "...";
         clearTimeout(timeoutId); // debounces
         timeoutId = setTimeout(() => {
-          STATE.TRANSFORM_FN = new Function(
-            "all_logs",
-            filterFunctionEl.textContent + "return transform(all_logs);"
-          );
+          updateTransformFn();
           transformFnStatusEl.innerHTML = "&#x2713;";
           render(allLogs);
         }, 777);
