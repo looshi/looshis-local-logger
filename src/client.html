@@ -53,6 +53,8 @@
       padding: 0 4px 2px;
       text-align: right;
       color: #c8c6c9;
+      display: flex;
+      flex-direction: column;
     }
 
     label {
@@ -169,7 +171,7 @@
     <header>
       <div>
         <label id="transform-instructions" for="code_editor">
-          Filter, map, limit, etc. (JS)<span id="transform-fn-status"></span>
+          Filter, map, limit, etc. (JS)
         </label>
         <div class="filter-function-area">
           <ol
@@ -177,13 +179,7 @@
             contenteditable
             spellcheck="false"
             aria-describedby="transform-instructions"
-          >
-            <li>function transform(logs){</li>
-            <li>&nbsp;&nbsp;return logs.slice(-50).filter(log => {</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
-            <li>&nbsp;&nbsp;});</li>
-            <li>}</li>
-          </ol>
+          ></ol>
         </div>
         <div class="error-message" id="filter-function-error"></div>
       </div>
@@ -193,7 +189,8 @@
           >Format JSON
           <input type="checkbox" checked id="parse-json-checkbox" />
         </label>
-        <button id="clear-btn">Clear Logs</button>
+        <button id="clear-button">Clear Logs</button>
+        <button id="reset-filter-button">Reset Filter</button>
       </div>
     </header>
     <div id="filter-count">No logs yet</div>
@@ -206,7 +203,7 @@
           referrerpolicy="origin"
           target="_blank"
         >
-          Looshi's Local Logger v2.0.1
+          Looshi's Local Logger v2.0.2
         </a>
       </p>
     </footer>
@@ -218,33 +215,50 @@
       const filterFunctionErrorEl = document.getElementById(
         "filter-function-error"
       );
-      const clearButtonEl = document.getElementById("clear-btn");
+      const clearButtonEl = document.getElementById("clear-button");
       const parseJsonCheckboxEl = document.getElementById(
         "parse-json-checkbox"
       );
       const mainEl = document.getElementsByTagName("main")[0];
       const status = document.getElementById("status");
-      const transformFnStatusEl = document.getElementById(
-        "transform-fn-status"
-      );
 
       const updateTransformFn = () => {
-        STATE.TRANSFORM_FN = new Function(
-          "all_logs",
-          filterFunctionEl.textContent + "return transform(all_logs);"
-        );
+        try {
+          STATE.TRANSFORM_FN = new Function(
+            "all_logs",
+            filterFunctionEl.textContent + "return transform(all_logs);"
+          );
+          filterFunctionErrorEl.textContent = "";
+        } catch (e) {
+          filterFunctionErrorEl.textContent = e.message;
+        }
       };
       updateTransformFn(); //Initializes transform fn to the default set in html above
 
+      const resetTransformFn = () => {
+        document.getElementById(
+          "code-editor"
+        ).innerHTML = `<li>function transform(logs){</li>
+            <li>&nbsp;&nbsp;return logs.slice(-50).filter(log => {</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+            <li>&nbsp;&nbsp;});</li>
+            <li>}</li>`;
+        filterFunctionErrorEl.textContent = "";
+        updateTransformFn();
+      };
+      resetTransformFn();
+      const resetFilterButtonEl = document.getElementById(
+        "reset-filter-button"
+      );
+      resetFilterButtonEl.addEventListener("click", resetTransformFn);
+
       let timeoutId;
       filterFunctionEl.addEventListener("keyup", () => {
-        transformFnStatusEl.innerHTML = "...";
         clearTimeout(timeoutId); // debounces
         timeoutId = setTimeout(() => {
           updateTransformFn();
-          transformFnStatusEl.innerHTML = "&#x2713;";
           render(allLogs);
-        }, 777);
+        }, 444);
       });
 
       clearButtonEl.addEventListener("click", () => {
@@ -276,13 +290,11 @@
       });
 
       function render(logs) {
-        filterFunctionErrorEl.innerHTML = "";
         let filteredLogs;
 
         try {
           filteredLogs = STATE.TRANSFORM_FN(logs);
         } catch (e) {
-          transformFnStatusEl.innerHTML = "...";
           filterFunctionErrorEl.textContent = e.message;
           filteredLogs = [];
         }
