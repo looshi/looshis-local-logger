@@ -1,6 +1,6 @@
 {
   "name": "looshis-local-logger",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "View terminal output in browser",
   "scripts": {
     "start": "node src/server.js",
