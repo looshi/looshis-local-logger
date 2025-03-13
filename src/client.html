@@ -157,6 +157,17 @@
       padding-right: 0;
       padding-left: 0;
       color: rgb(115, 115, 115);
+      display: flex;
+      justify-content: space-between;
+    }
+    #transform-instructions a {
+      color: #898888;
+      font-style: normal;
+    }
+    #transform-instructions a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+      color: #cccbcb;
     }
     #transform-fn-status {
       display: inline-block;
@@ -172,6 +183,7 @@
       <div>
         <label id="transform-instructions" for="code_editor">
           Filter, map, limit, etc. (JS)
+          <a id="reset-filter-button">Reset</a>
         </label>
         <div class="filter-function-area">
           <ol
@@ -190,7 +202,6 @@
           <input type="checkbox" checked id="parse-json-checkbox" />
         </label>
         <button id="clear-button">Clear Logs</button>
-        <button id="reset-filter-button">Reset Filter</button>
       </div>
     </header>
     <div id="filter-count">No logs yet</div>
