@@ -67,13 +67,13 @@ test("lll with options and NO pipe", async (t) => {
   await t.test("-v", options, async (t) => {
     const cmd = "npm run start -- -v";
     const { stdout } = await execPromise(cmd);
-    assert(stdout.includes("LLL v2.0.2"));
+    assert(stdout.includes("LLL v2.0.3"));
   });
 
   await t.test("--version", options, async (t) => {
     const cmd = "npm run start -- --version";
     const { stdout } = await execPromise(cmd);
-    assert(stdout.includes("LLL v2.0.2"));
+    assert(stdout.includes("LLL v2.0.3"));
   });
 
   await t.test("unsupported option", options, async (t) => {
