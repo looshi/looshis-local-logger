@@ -6,9 +6,9 @@
   <style>
     :root {
       accent-color: #60ba5d;
+      color-scheme: dark;
       font-family: monospace, Arial, Helvetica, sans-serif;
       font-size: 14px;
-      color-scheme: dark;
     }
 
     ::selection {
@@ -19,47 +19,50 @@
     html,
     body {
       height: 100%;
+      margin: 0;
+      padding: 0;
       width: 100%;
+    }
+
+    body {
+      background-color: #282828;
+      color: #aaa7ac;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+
+    header {
+      display: flex;
+      flex-shrink: 0;
+      justify-content: space-between;
+      padding: 24px 24px 0;
+    }
+
+    .header-controls {
+      color: #c8c6c9;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-controls input {
       margin: 0;
       padding: 0;
     }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      background-color: #282828;
-      color: #aaa7ac;
-    }
-
-    header {
-      flex-shrink: 0;
-      padding: 24px 24px 0;
-      display: flex;
-      justify-content: space-between;
+    main {
+      flex-grow: 1;
+      min-height: 2em;
+      overflow: auto;
     }
 
     #filter-count {
-      text-align: center;
       margin-bottom: 8px;
-    }
-
-    main {
-      flex-grow: 1;
-      overflow: auto;
-      min-height: 2em;
-    }
-    .main-controls {
-      padding: 0 4px 2px;
-      text-align: right;
-      color: #c8c6c9;
-      display: flex;
-      flex-direction: column;
+      text-align: center;
     }
 
     label {
       color: #c8c6c9;
-      padding-bottom: 4px;
       display: block;
     }
 
@@ -77,46 +80,50 @@
     }
 
     button {
-      margin-top: 2px;
+      margin-top: 8px;
       padding: 2px 8px;
     }
 
-    .log {
-      margin: 16px 24px;
-      padding: 16px;
-      color: #cec4c0;
-      background-color: #1a191a;
-      white-space: pre;
-      overflow-x: auto;
-      line-height: 1.3em;
-      position: relative;
+    a {
+      color: #cca9f7;
+      text-decoration: none;
     }
 
-    .filter-function-area {
-      background: #1d1e22;
-      padding: 0 24px 0 0;
-      border: 1px solid #1d1e22;
-    }
-    .filter-function-area:focus-within {
-      border: 1px solid #c4ce97;
-      color: #c6c1c9;
+    .log {
+      background-color: #1a191a;
+      color: #cec4c0;
+      line-height: 1.3em;
+      margin: 16px 24px;
+      overflow-x: auto;
+      padding: 16px;
+      position: relative;
+      white-space: pre;
     }
 
     #filter-function-error {
       background-color: #282828;
+      color: #f05050;
+      min-height: 1em;
+      padding: 8px 0;
       width: calc(100% + 24px);
     }
 
     #code-editor {
-      display: block;
-      transition: all 0.2s ease;
-      outline: 2px solid transparent;
-      line-height: 1.6em;
-    }
-    ol {
+      background: #1d1e22;
+      border: 1px solid #1d1e22;
       counter-reset: item;
+      display: block;
+      line-height: 1.6em;
       list-style-type: none;
-      padding-left: 20px;
+      margin: 8px 0 0;
+      outline: 2px solid transparent;
+      padding: 12px 24px;
+      transition: all 0.2s ease;
+    }
+
+    #code-editor:focus-within {
+      border: 1px solid #c4ce97;
+      color: #c6c1c9;
     }
 
     li:before {
@@ -124,55 +131,43 @@
       counter-increment: item;
       color: #34363e;
     }
+
     li::marker {
       color: #34363e;
     }
-    .filter-function-area:focus-within li::marker {
+
+    #code-editor:focus-within li::marker {
       color: #474a55;
     }
 
-    .error-message {
-      color: #f05050;
-      min-height: 1em;
-      padding: 8px 0;
-    }
-
-    a {
-      text-decoration: none;
-      color: #cca9f7;
-    }
-
     #copyable-text {
-      position: absolute;
       left: -1000px;
-    }
-    #copy-button {
-      visibility: hidden;
       position: absolute;
-      top: 4px;
-      right: 4px;
     }
+
+    #copy-button {
+      position: absolute;
+      right: 4px;
+      top: 4px;
+      visibility: hidden;
+    }
+
     #transform-instructions {
-      font-style: italic;
-      padding-right: 0;
-      padding-left: 0;
       color: rgb(115, 115, 115);
       display: flex;
+      font-style: italic;
       justify-content: space-between;
     }
+
     #transform-instructions a {
       color: #898888;
       font-style: normal;
     }
+
     #transform-instructions a:hover {
-      text-decoration: underline;
-      cursor: pointer;
       color: #cccbcb;
-    }
-    #transform-fn-status {
-      display: inline-block;
-      width: 14px;
-      text-align: right;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 
@@ -185,18 +180,16 @@
           Filter, map, limit, etc. (JS)
           <a id="reset-filter-button">Reset</a>
         </label>
-        <div class="filter-function-area">
-          <ol
-            id="code-editor"
-            contenteditable
-            spellcheck="false"
-            aria-describedby="transform-instructions"
-          ></ol>
-        </div>
-        <div class="error-message" id="filter-function-error"></div>
+        <ol
+          id="code-editor"
+          contenteditable
+          spellcheck="false"
+          aria-describedby="transform-instructions"
+        ></ol>
+        <div id="filter-function-error"></div>
       </div>
 
-      <div class="main-controls">
+      <div class="header-controls">
         <label for="parse-json-checkbox"
           >Format JSON
           <input type="checkbox" checked id="parse-json-checkbox" />
@@ -214,14 +207,17 @@
           referrerpolicy="origin"
           target="_blank"
         >
-          Looshi's Local Logger v2.0.2
+          Looshi's Local Logger v2.0.3
         </a>
       </p>
     </footer>
 
     <script>
-      const allLogs = [];
-      const STATE = { FORMAT_JSON: true, TRANSFORM_FN: (logs) => logs };
+      const STATE = {
+        allLogs: [],
+        formatJson: true,
+        transformFn: (logs) => logs,
+      };
       const filterFunctionEl = document.getElementById("code-editor");
       const filterFunctionErrorEl = document.getElementById(
         "filter-function-error"
@@ -231,11 +227,12 @@
         "parse-json-checkbox"
       );
       const mainEl = document.getElementsByTagName("main")[0];
-      const status = document.getElementById("status");
+      const statusEl = document.getElementById("status");
+      const codeEditorEl = document.getElementById("code-editor");
 
       const updateTransformFn = () => {
         try {
-          STATE.TRANSFORM_FN = new Function(
+          STATE.transformFn = new Function(
             "all_logs",
             filterFunctionEl.textContent + "return transform(all_logs);"
           );
@@ -247,15 +244,14 @@
       updateTransformFn(); //Initializes transform fn to the default set in html above
 
       const resetTransformFn = () => {
-        document.getElementById(
-          "code-editor"
-        ).innerHTML = `<li>function transform(logs){</li>
+        codeEditorEl.innerHTML = `<li>function transform(logs){</li>
             <li>&nbsp;&nbsp;return logs.slice(-50).filter(log => {</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
             <li>&nbsp;&nbsp;});</li>
             <li>}</li>`;
         filterFunctionErrorEl.textContent = "";
         updateTransformFn();
+        render(STATE.allLogs);
       };
       resetTransformFn();
       const resetFilterButtonEl = document.getElementById(
@@ -268,18 +264,18 @@
         clearTimeout(timeoutId); // debounces
         timeoutId = setTimeout(() => {
           updateTransformFn();
-          render(allLogs);
+          render(STATE.allLogs);
         }, 444);
       });
 
       clearButtonEl.addEventListener("click", () => {
-        allLogs.length = 0;
-        render(allLogs);
+        STATE.allLogs.length = 0;
+        render(STATE.allLogs);
       });
 
       parseJsonCheckboxEl.addEventListener("change", (event) => {
-        STATE.FORMAT_JSON = event.target.checked;
-        render(allLogs);
+        STATE.formatJson = event.target.checked;
+        render(STATE.allLogs);
       });
 
       // copy log to clipboard
@@ -304,13 +300,13 @@
         let filteredLogs;
 
         try {
-          filteredLogs = STATE.TRANSFORM_FN(logs);
+          filteredLogs = STATE.transformFn(logs);
         } catch (e) {
           filterFunctionErrorEl.textContent = e.message;
           filteredLogs = [];
         }
 
-        if (STATE.FORMAT_JSON) {
+        if (STATE.formatJson) {
           filteredLogs = filteredLogs.map((log) => {
             try {
               return JSON.parse(log);
@@ -353,19 +349,19 @@
       const es = new EventSource("http://localhost:{{port}}/events");
 
       es.addEventListener("open", (message) => {
-        status.textContent = "Connected";
-        status.setAttribute("style", "color: #60ba5d; ");
+        statusEl.textContent = "Connected";
+        statusEl.setAttribute("style", "color: #60ba5d; ");
       });
 
       es.addEventListener("error", (message) => {
-        status.textContent = "Not connected";
-        status.setAttribute("style", "color: orange;");
+        statusEl.textContent = "Not connected";
+        statusEl.setAttribute("style", "color: orange;");
       });
 
       es.addEventListener("message", (message) => {
-        status.textContent = "Connected";
-        allLogs.push(parseLog(message.data));
-        render(allLogs);
+        statusEl.textContent = "Connected";
+        STATE.allLogs.push(parseLog(message.data));
+        render(STATE.allLogs);
       });
     </script>
   </body>
