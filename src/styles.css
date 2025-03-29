@@ -1,0 +1,178 @@
+:root {
+  accent-color: #60ba5d;
+  color-scheme: dark;
+  font-family: monospace, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+::selection {
+  background: #e4e471;
+  color: black;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body {
+  background-color: #282828;
+  color: #aaa7ac;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+header {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  padding: 24px 24px 0;
+}
+
+.header-controls {
+  color: #c8c6c9;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-controls input {
+  margin: 0 0 16px 0;
+  padding: 0;
+}
+
+.header-controls button {
+  margin: 0;
+}
+
+main {
+  flex-grow: 1;
+  min-height: 2em;
+  overflow: auto;
+}
+
+#filter-count {
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+label {
+  color: #c8c6c9;
+  display: block;
+}
+
+footer {
+  flex-shrink: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+p {
+  margin: 0;
+  padding: 4px 20px;
+}
+
+button {
+  margin-top: 8px;
+  padding: 2px 8px;
+}
+
+a {
+  color: #cca9f7;
+  text-decoration: none;
+}
+
+.log {
+  background-color: #1a191a;
+  color: #cec4c0;
+  line-height: 1.3em;
+  margin: 16px 24px;
+  overflow-x: auto;
+  padding: 16px;
+  position: relative;
+  white-space: pre;
+}
+
+#filter-function-error {
+  background-color: #282828;
+  color: #f05050;
+  min-height: 1em;
+  padding: 8px 0;
+  width: calc(100% + 24px);
+}
+
+#filter-input {
+  background: #1d1e22;
+  border: 1px solid #1d1e22;
+  counter-reset: item;
+  display: block;
+  line-height: 1.6em;
+  list-style-type: none;
+  margin: 8px 0 0;
+  outline: 2px solid transparent;
+  padding: 12px 24px;
+  transition: all 0.2s ease;
+  font-size: 1.2em;
+}
+
+#filter-input:focus-within {
+  border: 1px solid #c4ce97;
+  color: #c6c1c9;
+}
+
+#limit-input {
+  width: 60px;
+  text-align: right;
+}
+
+li:before {
+  content: counter(item) "  ";
+  counter-increment: item;
+  color: #34363e;
+}
+
+li::marker {
+  color: #34363e;
+}
+
+#code-editor:focus-within li::marker {
+  color: #474a55;
+}
+
+#copyable-text {
+  left: -1000px;
+  position: absolute;
+}
+
+#copy-button {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  visibility: hidden;
+}
+
+#transform-instructions {
+  color: rgb(115, 115, 115);
+  display: flex;
+  justify-content: space-between;
+}
+
+#transform-instructions a {
+  color: #898888;
+  font-style: normal;
+}
+
+#transform-instructions a:hover {
+  color: #cccbcb;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.hidden {
+  visibility: hidden;
+}

@@ -4,8 +4,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 const HERE = fileURLToPath(import.meta.url);
-const CLIENT_FILE_PATH = `${path.dirname(HERE)}/client.html`;
-const VERSION = "LLL v2.0.3";
+const FILE_PATH = `${path.dirname(HERE)}`;
+const VERSION = "LLL v2.0.4";
 const port = process.env.LLL_PORT || 4000;
 let client; // allows only one client running at one time
 
@@ -18,8 +18,22 @@ http
         Connection: "keep-alive",
         "Cache-Control": "no-cache",
       });
+    } else if (req.url === "/styles.css") {
+      const css = fs.readFileSync(`${FILE_PATH}/styles.css`, "utf8");
+      res.end(css);
     } else {
-      const html = fs.readFileSync(CLIENT_FILE_PATH, "utf8");
+      const html = fs.readFileSync(`${FILE_PATH}/client.html`, "utf8");
+      const csp = [
+        // `default-src 'none'`,
+        // `script-src 'sha256-t2B0l10G6fdyY90Td7Qmmf3owE5colKwhOOluN1Lz/8='`,
+        // `style-src unsafe-hashes 'sha256-SKZX4LZ24X8CzDmS8N6fYPwhkFW40XwkU6EfhaWtntA='`,
+        // `style-src-elem 'self'`,
+        `connect-src 'self'`,
+      ];
+      res.writeHead(200, {
+        "Content-Type": "text/html",
+        "Content-Security-Policy": csp.join(";"),
+      });
       res.end(html.replace("{{port}}", port));
     }
   })
