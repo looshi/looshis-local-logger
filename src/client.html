@@ -4,7 +4,6 @@
     <title>LLL</title>
     <link href="styles.css" rel="stylesheet" />
   </head>
-
   <body>
     <textarea id="copyable-text"></textarea>
     <button id="copy-button">Copy</button>
@@ -70,20 +69,15 @@
       const statusEl = document.getElementById("status");
 
       const updateTransformFn = () => {
-        try {
-          STATE.transformFn = (logs) => {
-            const limitedLogs = limitInputEl.value
-              ? logs.slice(0, limitInputEl.value)
-              : logs;
+        STATE.transformFn = (logs) => {
+          const limitedLogs = limitInputEl.value
+            ? logs.slice(0, limitInputEl.value)
+            : logs;
+          if (!filterInputEl.value) return limitedLogs;
 
-            if (!filterInputEl.value) return limitedLogs;
-            const regex = new RegExp(filterInputEl.value);
-
-            return limitedLogs.filter((log) => regex.test(log));
-          };
-        } catch (e) {
-          console.error("error in filter fn", e);
-        }
+          const regex = new RegExp(filterInputEl.value);
+          return limitedLogs.filter((log) => regex.test(log));
+        };
       };
       updateTransformFn(); //Initializes transform fn to the default set in html above
 
@@ -126,20 +120,20 @@
       const copyBtn = document.getElementById("copy-button");
       const copyableTextEl = document.getElementById("copyable-text");
       copyBtn.addEventListener("click", (e) => {
-        copyableTextEl.value = e.target.parentNode.innerText.split("Copy")[1];
+        copyableTextEl.value = e.target.parentNode.innerText
+          .split("Copy")[1]
+          .trim();
         copyableTextEl.select();
         document.execCommand("copy");
       });
       mainEl.addEventListener("mouseover", (e) => {
         if (e.target.className === "log" && e.target.id !== "copy-button") {
-          //copyBtn.setAttribute("style", "visibility: visible");
-          copyBtn.classList.remove("hidden");
+          copyBtn.style.visibility = "visible";
           e.target.prepend(copyBtn);
         }
       });
       mainEl.addEventListener("mouseleave", (e) => {
-        //copyBtn.setAttribute("style", "visibility: hidden");
-        copyBtn.classList.add("hidden");
+        copyBtn.style.visibility = "hidden";
       });
 
       function render(logs) {
@@ -152,7 +146,6 @@
             try {
               return JSON.parse(log);
             } catch (e) {}
-
             return log;
           });
         }
@@ -191,12 +184,12 @@
 
       es.addEventListener("open", (message) => {
         statusEl.textContent = "Connected";
-        statusEl.setAttribute("style", "color: #60ba5d; ");
+        statusEl.style.color = "#60ba5d";
       });
 
       es.addEventListener("error", (message) => {
         statusEl.textContent = "Not connected";
-        statusEl.setAttribute("style", "color: orange;");
+        statusEl.style.color = "orange";
       });
 
       es.addEventListener("message", (message) => {

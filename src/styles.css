@@ -1,5 +1,5 @@
 :root {
-  accent-color: #60ba5d;
+  accent-color: #b6b6b6;
   color-scheme: dark;
   font-family: monospace, Arial, Helvetica, sans-serif;
   font-size: 14px;
@@ -98,46 +98,34 @@ a {
   white-space: pre;
 }
 
-#filter-function-error {
-  background-color: #282828;
-  color: #f05050;
-  min-height: 1em;
-  padding: 8px 0;
-  width: calc(100% + 24px);
+input[type="text"],
+input[type="number"] {
+  background: #1d1e22;
+  border: 1px solid #434343;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border: 1px solid #c4ce97;
+  color: #c6c1c9;
 }
 
 #filter-input {
-  background: #1d1e22;
-  border: 1px solid #1d1e22;
-  counter-reset: item;
   display: block;
   line-height: 1.6em;
   list-style-type: none;
   margin: 8px 0 0;
   outline: 2px solid transparent;
-  padding: 12px 24px;
-  transition: all 0.2s ease;
+  padding: 8px 20px;
   font-size: 1.2em;
-}
-
-#filter-input:focus-within {
-  border: 1px solid #c4ce97;
-  color: #c6c1c9;
 }
 
 #limit-input {
   width: 60px;
   text-align: right;
-}
-
-li:before {
-  content: counter(item) "  ";
-  counter-increment: item;
-  color: #34363e;
-}
-
-li::marker {
-  color: #34363e;
+  outline: 2px solid transparent;
+  padding: 4px 0;
 }
 
 #code-editor:focus-within li::marker {
@@ -157,7 +145,6 @@ li::marker {
 }
 
 #transform-instructions {
-  color: rgb(115, 115, 115);
   display: flex;
   justify-content: space-between;
 }

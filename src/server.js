@@ -24,10 +24,9 @@ http
     } else {
       const html = fs.readFileSync(`${FILE_PATH}/client.html`, "utf8");
       const csp = [
-        // `default-src 'none'`,
-        // `script-src 'sha256-t2B0l10G6fdyY90Td7Qmmf3owE5colKwhOOluN1Lz/8='`,
-        // `style-src unsafe-hashes 'sha256-SKZX4LZ24X8CzDmS8N6fYPwhkFW40XwkU6EfhaWtntA='`,
-        // `style-src-elem 'self'`,
+        `default-src 'self'`,
+        `script-src 'sha256-l42AaynljS2mcCKsTNIQhPN4JpzsGPUaKPKhXZVehMc='`,
+        `style-src-elem 'self'`,
         `connect-src 'self'`,
       ];
       res.writeHead(200, {
