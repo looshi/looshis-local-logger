@@ -41,36 +41,12 @@ npm run start |& lll
 ruby ./ruby.rb |& lll
 ```
 
-### Filtering output
-
-There is an editable javascript function at the top of the browser screen, it must be named "transform" and accepts one argument "logs" which are all of the logs received since the browser has been open. This can be edited to filter, map, and limit the output. Here are some examples:
-
-```js
-// Display only logs that contain the string "spinal tap", limit to 11
-function transform(logs) {
-  return logs.slice(-11).filter((log) => {
-    return log.includes("spinal tap");
-  });
-}
-```
-
-```js
-// Display only some nested property of JSON logs
-function transform(logs) {
-  return logs.map((log) => {
-    try {
-      return JSON.parse(log).some.nested.property;
-    } catch (e) {
-      return "could not parse";
-    }
-  });
-}
-```
-
 ## About
 
-lll is a command line utility that serves its stdin to a browser. lll is designed to be used for local development where a lot of logs are being generated and need to be filtered, formatted, copy/pasted, etc.
+lll can be used during local development to filter, format, and copy/paste logs.
 
-lll attempts to organize logs visually. Large logs may sometimes span multiple blocks due to size limitations of piping stdin. lll does its best to keep large JSON-stringified logs in tact. Other kinds of large logs may span multiple blocks, but this may be fixed or addressed in the future.
+lll is a command line utility that serves its stdin to a browser.
 
-lll has no dependencies and uses only javascript, html, css, and the built in node Test runner.
+lll does its best to keep large JSON-stringified logs in tact. Other kinds of large logs may span multiple blocks, but this may be fixed or addressed in the future.
+
+lll has no dependencies.
