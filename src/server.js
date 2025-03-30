@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 const HERE = fileURLToPath(import.meta.url);
 const FILE_PATH = `${path.dirname(HERE)}`;
-const VERSION = "LLL v2.0.5";
+const VERSION = "LLL v2.0.6";
 const port = process.env.LLL_PORT || 4000;
 let client; // allows only one client running at one time
 
