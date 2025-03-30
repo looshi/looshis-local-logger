@@ -2,197 +2,38 @@
 <html lang="en-us">
   <head>
     <title>LLL</title>
+    <link href="styles.css" rel="stylesheet" />
   </head>
-  <style>
-    :root {
-      accent-color: #60ba5d;
-      color-scheme: dark;
-      font-family: monospace, Arial, Helvetica, sans-serif;
-      font-size: 14px;
-    }
-
-    ::selection {
-      background: #e4e471;
-      color: black;
-    }
-
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-    }
-
-    body {
-      background-color: #282828;
-      color: #aaa7ac;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-    }
-
-    header {
-      display: flex;
-      flex-shrink: 0;
-      justify-content: space-between;
-      padding: 24px 24px 0;
-    }
-
-    .header-controls {
-      color: #c8c6c9;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header-controls input {
-      margin: 0;
-      padding: 0;
-    }
-
-    main {
-      flex-grow: 1;
-      min-height: 2em;
-      overflow: auto;
-    }
-
-    #filter-count {
-      margin-bottom: 8px;
-      text-align: center;
-    }
-
-    label {
-      color: #c8c6c9;
-      display: block;
-    }
-
-    footer {
-      flex-shrink: 0;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    p {
-      margin: 0;
-      padding: 4px 20px;
-    }
-
-    button {
-      margin-top: 8px;
-      padding: 2px 8px;
-    }
-
-    a {
-      color: #cca9f7;
-      text-decoration: none;
-    }
-
-    .log {
-      background-color: #1a191a;
-      color: #cec4c0;
-      line-height: 1.3em;
-      margin: 16px 24px;
-      overflow-x: auto;
-      padding: 16px;
-      position: relative;
-      white-space: pre;
-    }
-
-    #filter-function-error {
-      background-color: #282828;
-      color: #f05050;
-      min-height: 1em;
-      padding: 8px 0;
-      width: calc(100% + 24px);
-    }
-
-    #code-editor {
-      background: #1d1e22;
-      border: 1px solid #1d1e22;
-      counter-reset: item;
-      display: block;
-      line-height: 1.6em;
-      list-style-type: none;
-      margin: 8px 0 0;
-      outline: 2px solid transparent;
-      padding: 12px 24px;
-      transition: all 0.2s ease;
-    }
-
-    #code-editor:focus-within {
-      border: 1px solid #c4ce97;
-      color: #c6c1c9;
-    }
-
-    li:before {
-      content: counter(item) "  ";
-      counter-increment: item;
-      color: #34363e;
-    }
-
-    li::marker {
-      color: #34363e;
-    }
-
-    #code-editor:focus-within li::marker {
-      color: #474a55;
-    }
-
-    #copyable-text {
-      left: -1000px;
-      position: absolute;
-    }
-
-    #copy-button {
-      position: absolute;
-      right: 4px;
-      top: 4px;
-      visibility: hidden;
-    }
-
-    #transform-instructions {
-      color: rgb(115, 115, 115);
-      display: flex;
-      font-style: italic;
-      justify-content: space-between;
-    }
-
-    #transform-instructions a {
-      color: #898888;
-      font-style: normal;
-    }
-
-    #transform-instructions a:hover {
-      color: #cccbcb;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  </style>
-
   <body>
     <textarea id="copyable-text"></textarea>
     <button id="copy-button">Copy</button>
     <header>
       <div>
-        <label id="transform-instructions" for="code_editor">
-          Filter, map, limit, etc. (JS)
+        <label id="transform-instructions" for="filter-input">
+          Filter Logs
           <a id="reset-filter-button">Reset</a>
         </label>
-        <ol
-          id="code-editor"
-          contenteditable
+        <input
+          id="filter-input"
+          type="text"
           spellcheck="false"
           aria-describedby="transform-instructions"
-        ></ol>
-        <div id="filter-function-error"></div>
+        />
       </div>
 
       <div class="header-controls">
         <label for="parse-json-checkbox"
           >Format JSON
           <input type="checkbox" checked id="parse-json-checkbox" />
+        </label>
+        <label id="limit-instructions" for="limit-input"
+          >Limit
+          <input
+            id="limit-input"
+            type="number"
+            aria-describedby="limit-instructions"
+            value="100"
+          />
         </label>
         <button id="clear-button">Clear Logs</button>
       </div>
@@ -207,7 +48,7 @@
           referrerpolicy="origin"
           target="_blank"
         >
-          Looshi's Local Logger v2.0.3
+          Looshi's Local Logger v2.0.4
         </a>
       </p>
     </footer>
@@ -218,38 +59,30 @@
         formatJson: true,
         transformFn: (logs) => logs,
       };
-      const filterFunctionEl = document.getElementById("code-editor");
-      const filterFunctionErrorEl = document.getElementById(
-        "filter-function-error"
-      );
+      const filterInputEl = document.getElementById("filter-input");
       const clearButtonEl = document.getElementById("clear-button");
       const parseJsonCheckboxEl = document.getElementById(
         "parse-json-checkbox"
       );
+      const limitInputEl = document.getElementById("limit-input");
       const mainEl = document.getElementsByTagName("main")[0];
       const statusEl = document.getElementById("status");
-      const codeEditorEl = document.getElementById("code-editor");
 
       const updateTransformFn = () => {
-        try {
-          STATE.transformFn = new Function(
-            "all_logs",
-            filterFunctionEl.textContent + "return transform(all_logs);"
-          );
-          filterFunctionErrorEl.textContent = "";
-        } catch (e) {
-          filterFunctionErrorEl.textContent = e.message;
-        }
+        STATE.transformFn = (logs) => {
+          const limitedLogs = limitInputEl.value
+            ? logs.slice(0, limitInputEl.value)
+            : logs;
+          if (!filterInputEl.value) return limitedLogs;
+
+          const regex = new RegExp(filterInputEl.value);
+          return limitedLogs.filter((log) => regex.test(log));
+        };
       };
       updateTransformFn(); //Initializes transform fn to the default set in html above
 
       const resetTransformFn = () => {
-        codeEditorEl.innerHTML = `<li>function transform(logs){</li>
-            <li>&nbsp;&nbsp;return logs.slice(-50).filter(log => {</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
-            <li>&nbsp;&nbsp;});</li>
-            <li>}</li>`;
-        filterFunctionErrorEl.textContent = "";
+        filterInputEl.value = "";
         updateTransformFn();
         render(STATE.allLogs);
       };
@@ -260,12 +93,17 @@
       resetFilterButtonEl.addEventListener("click", resetTransformFn);
 
       let timeoutId;
-      filterFunctionEl.addEventListener("keyup", () => {
+      filterInputEl.addEventListener("keyup", () => {
         clearTimeout(timeoutId); // debounces
         timeoutId = setTimeout(() => {
           updateTransformFn();
           render(STATE.allLogs);
         }, 444);
+      });
+
+      limitInputEl.addEventListener("change", () => {
+        updateTransformFn();
+        render(STATE.allLogs);
       });
 
       clearButtonEl.addEventListener("click", () => {
@@ -282,41 +120,37 @@
       const copyBtn = document.getElementById("copy-button");
       const copyableTextEl = document.getElementById("copyable-text");
       copyBtn.addEventListener("click", (e) => {
-        copyableTextEl.value = e.target.parentNode.innerText.split("Copy")[1];
+        copyableTextEl.value = e.target.parentNode.innerText
+          .split("Copy")[1]
+          .trim();
         copyableTextEl.select();
         document.execCommand("copy");
       });
       mainEl.addEventListener("mouseover", (e) => {
         if (e.target.className === "log" && e.target.id !== "copy-button") {
-          copyBtn.setAttribute("style", "visibility: visible");
+          copyBtn.style.visibility = "visible";
           e.target.prepend(copyBtn);
         }
       });
       mainEl.addEventListener("mouseleave", (e) => {
-        copyBtn.setAttribute("style", "visibility: hidden");
+        copyBtn.style.visibility = "hidden";
       });
 
       function render(logs) {
         let filteredLogs;
 
-        try {
-          filteredLogs = STATE.transformFn(logs);
-        } catch (e) {
-          filterFunctionErrorEl.textContent = e.message;
-          filteredLogs = [];
-        }
+        filteredLogs = STATE.transformFn(logs);
 
         if (STATE.formatJson) {
-          filteredLogs = filteredLogs.map((log) => {
+          filteredLogs = filteredLogs?.map((log) => {
             try {
               return JSON.parse(log);
             } catch (e) {}
-
             return log;
           });
         }
 
-        const logCountMessage = `Showing ${filteredLogs.length} of ${logs.length} total`;
+        const logCountMessage = `Showing ${filteredLogs?.length} of ${logs.length} total`;
         document.getElementById("filter-count").innerText = logCountMessage;
 
         const fragment = new DocumentFragment();
@@ -350,12 +184,12 @@
 
       es.addEventListener("open", (message) => {
         statusEl.textContent = "Connected";
-        statusEl.setAttribute("style", "color: #60ba5d; ");
+        statusEl.style.color = "#60ba5d";
       });
 
       es.addEventListener("error", (message) => {
         statusEl.textContent = "Not connected";
-        statusEl.setAttribute("style", "color: orange;");
+        statusEl.style.color = "orange";
       });
 
       es.addEventListener("message", (message) => {
