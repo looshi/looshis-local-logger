@@ -6,8 +6,6 @@ View and filter logs in a browser during local development.
 
 ![browser window showing logs](https://github.com/looshi/looshis-local-logger/blob/main/examples/example.png)
 
-LLL has no dependencies!
-
 ## Install
 
 ```sh
@@ -43,10 +41,8 @@ ruby ./ruby.rb |& lll
 
 ## About
 
-lll can be used during local development to filter, format, and copy/paste logs.
+lll is a command-line utility that serves its stdin to a browser, allowing developers a convienent way to filter, format, and copy/paste logs during local development. Any app that outputs to stdout can be used with lll.
 
-lll is a command line utility that serves its stdin to a browser.
+lll does its best to keep large JSON logs intact. Other types of logs may span multiple blocks; this may be addressed in the future.
 
-lll does its best to keep large JSON-stringified logs in tact. Other kinds of large logs may span multiple blocks, but this may be fixed or addressed in the future.
-
-lll has no dependencies.
+lll is written in HTML, CSS, and JavaScript with no dependencies.

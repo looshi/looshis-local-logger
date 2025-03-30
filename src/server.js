@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 const HERE = fileURLToPath(import.meta.url);
 const FILE_PATH = `${path.dirname(HERE)}`;
-const VERSION = "LLL v2.0.4";
+const VERSION = "LLL v2.0.5";
 const port = process.env.LLL_PORT || 4000;
 let client; // allows only one client running at one time
 
@@ -25,7 +25,7 @@ http
       const html = fs.readFileSync(`${FILE_PATH}/client.html`, "utf8");
       const csp = [
         `default-src 'self'`,
-        `script-src 'sha256-l42AaynljS2mcCKsTNIQhPN4JpzsGPUaKPKhXZVehMc='`,
+        `script-src 'sha256-6aMHtv6gTb0hNElYT9lq+CwMbPz8EJg8aBkTbCNsQOw='`,
         `style-src-elem 'self'`,
         `connect-src 'self'`,
       ];
