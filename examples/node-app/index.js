@@ -18,7 +18,7 @@ const data = () =>
     time: Date.now(),
     MY_VAR: process.env.MY_VAR,
     small_array: Array(Math.ceil(Math.random() * 10)).fill("dogs"),
-    large_array: Array(Math.ceil(Math.random() * 200)).fill(
+    large_array: Array(Math.ceil(Math.random() * 2)).fill(
       "cats ".repeat(Math.random() * 200)
     ),
   });
