@@ -41,7 +41,7 @@ ruby ./ruby.rb |& lll
 
 ## About
 
-lll is a command-line utility that serves its stdin to a browser, allowing developers a convienent way to filter, format, and copy/paste logs during local development. Any app that outputs to stdout can be used with lll.
+lll is a command-line utility that serves its stdin to a browser, allowing developers a convenient way to filter, format, and copy/paste logs during local development. Any app that outputs to stdout can be used with lll.
 
 lll does its best to keep large JSON logs intact. Other types of logs may span multiple blocks; this may be addressed in the future.
 
