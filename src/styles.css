@@ -39,13 +39,8 @@ header {
   flex-direction: column;
 }
 
-.header-controls input {
-  margin: 0 0 16px 0;
-  padding: 0;
-}
-
-.header-controls button {
-  margin: 0;
+.header-controls label {
+  margin: 0 0 8px 0;
 }
 
 main {
@@ -78,7 +73,7 @@ p {
 }
 
 button {
-  margin-top: 8px;
+  margin-top: 4px;
   padding: 2px 8px;
 }
 
@@ -102,7 +97,8 @@ input[type="text"],
 input[type="number"] {
   background: #1d1e22;
   border: 1px solid #434343;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
+  outline: 2px solid transparent;
 }
 
 input[type="text"]:focus,
@@ -116,7 +112,6 @@ input[type="number"]:focus {
   line-height: 1.6em;
   list-style-type: none;
   margin: 8px 0 0;
-  outline: 2px solid transparent;
   padding: 8px 20px;
   font-size: 1.2em;
 }
@@ -124,12 +119,7 @@ input[type="number"]:focus {
 #limit-input {
   width: 60px;
   text-align: right;
-  outline: 2px solid transparent;
   padding: 4px 0;
-}
-
-#code-editor:focus-within li::marker {
-  color: #474a55;
 }
 
 #copyable-text {
@@ -147,19 +137,4 @@ input[type="number"]:focus {
 #transform-instructions {
   display: flex;
   justify-content: space-between;
-}
-
-#transform-instructions a {
-  color: #898888;
-  font-style: normal;
-}
-
-#transform-instructions a:hover {
-  color: #cccbcb;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.hidden {
-  visibility: hidden;
 }

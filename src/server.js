@@ -24,8 +24,8 @@ http
     } else {
       const html = fs.readFileSync(`${FILE_PATH}/client.html`, "utf8");
       const csp = [
-        `default-src 'self'`,
-        `script-src 'sha256-l42AaynljS2mcCKsTNIQhPN4JpzsGPUaKPKhXZVehMc='`,
+        //`default-src 'self'`,
+        //`script-src 'sha256-l42AaynljS2mcCKsTNIQhPN4JpzsGPUaKPKhXZVehMc='`,
         `style-src-elem 'self'`,
         `connect-src 'self'`,
       ];

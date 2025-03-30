@@ -11,7 +11,6 @@
       <div>
         <label id="transform-instructions" for="filter-input">
           Filter Logs
-          <a id="reset-filter-button">Reset</a>
         </label>
         <input
           id="filter-input"
@@ -68,29 +67,25 @@
       const mainEl = document.getElementsByTagName("main")[0];
       const statusEl = document.getElementById("status");
 
+      const toRegex = (str) => {
+        const match = str.match(/^([/~@;%#'"])(.*?)\1([gimsuy]*)$/);
+        if (!match) return new RegExp(str);
+        return new RegExp(match[2], match[3]);
+      };
+
       const updateTransformFn = () => {
         STATE.transformFn = (logs) => {
           const limitedLogs = limitInputEl.value
             ? logs.slice(0, limitInputEl.value)
             : logs;
-          if (!filterInputEl.value) return limitedLogs;
 
-          const regex = new RegExp(filterInputEl.value);
-          return limitedLogs.filter((log) => regex.test(log));
+          if (!filterInputEl.value) return limitedLogs;
+          return limitedLogs.filter((log) =>
+            toRegex(filterInputEl.value).test(log)
+          );
         };
       };
       updateTransformFn(); //Initializes transform fn to the default set in html above
-
-      const resetTransformFn = () => {
-        filterInputEl.value = "";
-        updateTransformFn();
-        render(STATE.allLogs);
-      };
-      resetTransformFn();
-      const resetFilterButtonEl = document.getElementById(
-        "reset-filter-button"
-      );
-      resetFilterButtonEl.addEventListener("click", resetTransformFn);
 
       let timeoutId;
       filterInputEl.addEventListener("keyup", () => {
@@ -168,7 +163,7 @@
               txt = log;
             }
           }
-          div.innerText = txt;
+          div.textContent = txt;
           fragment.prepend(div);
         });
 
